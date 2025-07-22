@@ -47,7 +47,7 @@ enum ParticipationStatus {
 // ===================
 
 model User {
-  id             Int       @id @default(autoincrement())
+  id             String    @id @default(uuid())
   name           String
   email          String    @unique
   password       String
@@ -68,12 +68,11 @@ model User {
   createdPayments Payment[]
   join            Join[]              @relation("UserJoins")
 
-
   @@map("users")
 }
 
 model Seller {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   name         String
   contact_info String?
   created_at   DateTime @default(now())
@@ -86,7 +85,7 @@ model Seller {
 }
 
 model Category {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   name       String   @unique
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -98,7 +97,7 @@ model Category {
 }
 
 model Deal {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(uuid())
   title       String
   description String
   image_url   String?
@@ -109,10 +108,10 @@ model Deal {
   updated_at  DateTime   @updatedAt
 
   // Foreign Keys
-  category_id Int
-  seller_id   Int
-  creator     Int
-  updater     Int?
+  category_id String
+  seller_id   String
+  creator     String
+  updater     String?
 
   // Relations
   category      Category   @relation(fields: [category_id], references: [id])
@@ -127,16 +126,16 @@ model Deal {
 }
 
 model Tier {
-  id               Int      @id @default(autoincrement())
+  id               String   @id @default(uuid())
   min_participants Int
   price            Float
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
 
   // Foreign Keys
-  deal_id Int
-  creator Int
-  updater Int?
+  deal_id String
+  creator String
+  updater String?
 
   // Relations
   deal          Deal  @relation(fields: [deal_id], references: [id])
@@ -147,7 +146,7 @@ model Tier {
 }
 
 model Join {
-  id                   Int                 @id @default(autoincrement())
+  id                   String              @id @default(uuid())
   participation_status ParticipationStatus
   max_participants     Int
   notes                String?
@@ -158,29 +157,27 @@ model Join {
   updated_at           DateTime            @updatedAt
 
   // Foreign Keys
-  user_id Int
-  deal_id Int
+  user_id String
+  deal_id String
 
   // Relations
   user    User     @relation("UserJoins", fields: [user_id], references: [id])
   deal    Deal     @relation(fields: [deal_id], references: [id])
   payment Payment?
 
-
-
   @@map("joins")
 }
 
 model Payment {
-  id             Int           @id @default(autoincrement())
+  id             String        @id @default(uuid())
   amount         Float
   method         Method
   payment_status PaymentStatus @default(PENDING)
   created_at     DateTime      @default(now())
 
   // Foreign Keys
-  join_id Int @unique // One-to-one with Join
-  creator Int
+  join_id String @unique
+  creator String
 
   // Relations
   join            Join             @relation(fields: [join_id], references: [id])
@@ -191,14 +188,14 @@ model Payment {
 }
 
 model TransactionLog {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   amount     Float
   status     String
   notes      String?
   created_at DateTime @default(now())
 
   // Foreign Keys
-  payment_id Int
+  payment_id String
 
   // Relations
   payment Payment @relation(fields: [payment_id], references: [id])
@@ -207,13 +204,13 @@ model TransactionLog {
 }
 
 model Waitlist {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   // Foreign Keys
-  user_id Int
-  deal_id Int
+  user_id String
+  deal_id String
 
   // Relations
   user User @relation(fields: [user_id], references: [id])
@@ -224,13 +221,13 @@ model Waitlist {
 }
 
 model TrustScore {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   change     Int
   reason     String
   created_at DateTime @default(now())
 
   // Foreign Keys
-  user_id Int
+  user_id String
 
   // Relations
   user User @relation(fields: [user_id], references: [id])
@@ -239,14 +236,14 @@ model TrustScore {
 }
 
 model NotificationTable {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   title      String
   message    String
   read_at    DateTime?
   created_at DateTime  @default(now())
 
   // Foreign Keys
-  user_id Int
+  user_id String
 
   // Relations
   user User @relation(fields: [user_id], references: [id])
