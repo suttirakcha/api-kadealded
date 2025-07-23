@@ -4,7 +4,6 @@ export const registerSchema = object({
   name: string().required("Enter you name"),
   email: string().email().required("enter email"),
   password: string().min(6).required("password is required"),
-  birth_date: number().required(""),
 });
 export const validate = (schema) => async (req, res, next) => {
   try {
