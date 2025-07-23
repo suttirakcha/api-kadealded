@@ -1,9 +1,3 @@
-import React from 'react'
-
-function auth_service() {
-  return (
-    <div>auth.service</div>
-  )
-}
-
-export default auth_service
+// export const userRegister = async () => {
+//   const {name ,email , password , birth}
+// }
