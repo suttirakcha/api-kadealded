@@ -1,0 +1,73 @@
+import * as adminService from "../services/admin.service.js"
+
+export const createDeal = async (req, res, next) => {
+  try {
+    const data = req.body
+    const result = await adminService.createDeal(data)
+    res.status(201).json({message: "Deal Created", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const updateDeal = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const data = req.body
+    const result = await adminService.updateDeal(id,data)
+    res.status(200).json({message: "Deal Updated", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const deleteDeal = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const result = await adminService.deleteDeal(id)
+    res.status(200).json({message: "Deal Deleted", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const getAllPromotionJoiner = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const result = await adminService.getAllPromotionJoiner(id)
+    res.status(200).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+export const getAllConfirmations = async (req, res, next) => {
+  try {
+    const result = await adminService.getAllConfirmations()
+    res.status(200).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+export const approveRefundRequest = async (req, res, next) => {
+  try {
+    const {joinId} = req.params
+    const result = await adminService.approveRefundRequest(joinId)
+    res.status(200).json({message: "Refund Approved", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const rejectRefundRequest = async (req, res, next) => {
+  try {
+    const {joinId} = req.params
+    const result = await adminService.rejectRefundRequest(joinId)
+    res.status(200).json({message: "Refund Rejected", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const getAllStatistics = async (req, res, next) => {
+  try {
+    const result = await adminService.getAllStatistics()
+    res.status(200).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
