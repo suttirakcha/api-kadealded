@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import { notFoundUtil } from "./utils/notFound.util.js";
 import { errorUtil } from "./utils/error.util.js";
+import userRouter from "./routers/authRouter.js";
 
 
 dotenv.config();
@@ -14,6 +15,8 @@ const PORT = process.env.PORT || 8000;
 
 app.use(morgan("dev"))
 app.use(express.json());
+
+app.use('/api',userRouter)
 
 
 // Experimentally start the server, will be removed soon
