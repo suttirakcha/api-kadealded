@@ -6,4 +6,4 @@ function auth_controller() {
   )
 }
 
-export default auth.controller
+export default auth_controller

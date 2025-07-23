@@ -6,4 +6,4 @@ function auth_middleware() {
   )
 }
 
-export default auth.middleware
+export default auth_middleware

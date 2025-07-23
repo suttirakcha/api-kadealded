@@ -6,4 +6,4 @@ function auth_service() {
   )
 }
 
-export default auth.service
+export default auth_service
