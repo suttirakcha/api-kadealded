@@ -1,6 +1,6 @@
 import React from 'react'
 
-function auth.controller() {
+function auth_controller() {
   return (
     <div>auth.controller</div>
   )

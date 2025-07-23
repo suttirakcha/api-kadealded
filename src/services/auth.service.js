@@ -1,6 +1,6 @@
 import React from 'react'
 
-function auth.service() {
+function auth_service() {
   return (
     <div>auth.service</div>
   )

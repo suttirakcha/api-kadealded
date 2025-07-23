@@ -1,6 +1,6 @@
 import React from 'react'
 
-function auth.middleware() {
+function auth_middleware() {
   return (
     <div>auth.middleware</div>
   )
