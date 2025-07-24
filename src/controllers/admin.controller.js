@@ -28,10 +28,10 @@ export const deleteDeal = async (req, res, next) => {
     next(error)
   }
 }
-export const getAllPromotionJoiner = async (req, res, next) => {
+export const getAllDealJoiner = async (req, res, next) => {
   try {
     const {id} = req.params
-    const result = await adminService.getAllPromotionJoiner(id)
+    const result = await adminService.getAllDealJoiner(id)
     res.status(200).json(result)
   } catch (error) {
     next(error)

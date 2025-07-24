@@ -190,7 +190,7 @@ model PaymentHistory {
 
   payment Payment @relation("PaymentHistories", fields: [payment_id], references: [id])
 
-  @@map("transaction_logs")
+  @@map("payment_history")
 }
 
 model TrustScore {
