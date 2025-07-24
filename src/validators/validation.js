@@ -1,9 +1,10 @@
-import { number, object, string } from "yup";
+import { object, ref, string } from "yup";
 
 export const registerSchema = object({
   name: string().required("Enter you name"),
   email: string().email().required("enter email"),
   password: string().min(6).required("password is required"),
+  confirmPassword : string().oneOf([ref("password"),null]).required("confirmPassword is required")
 });
 export const validate = (schema) => async (req, res, next) => {
   try {
