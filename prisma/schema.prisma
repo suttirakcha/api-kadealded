@@ -3,13 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql" // or "mysql", "sqlite", "sqlserver", "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
-// ===================
-// ENUMS
-// ===================
 
 enum Role {
   SUPERADMIN
@@ -31,7 +27,7 @@ enum PaymentStatus {
   PAID
 }
 
-enum Method {
+enum PaymentMethod {
   QR
   TRANSFER
   CARD
@@ -42,9 +38,16 @@ enum ParticipationStatus {
   CANCELLED
 }
 
-// ===================
-// MODELS
-// ===================
+enum CoinTransactionType {
+  TOPUP
+  JOIN_USE
+  EXPIRED_FORFEIT
+}
+
+enum OtpType {
+  VERIFY_EMAIL
+  FORGOT_PASSWORD
+}
 
 model User {
   id             String    @id @default(uuid())
@@ -53,20 +56,19 @@ model User {
   password       String
   role           Role      @default(CUSTOMER)
   birth_date     DateTime?
+  coin           Int       @default(0)
   trust_score_id Int?
   created_at     DateTime  @default(now())
   updated_at     DateTime  @updatedAt
 
-  // Relations
   notifications   NotificationTable[]
-  waitlists       Waitlist[]
   trustScores     TrustScore[]
   createdDeals    Deal[]              @relation("CreatedDeals")
   updatedDeals    Deal[]              @relation("UpdatedDeals")
-  createdTiers    Tier[]              @relation("CreatedTiers")
-  updatedTiers    Tier[]              @relation("UpdatedTiers")
+  createdTiers    PriceTier[]         @relation("CreatedPriceTiers")
+  updatedTiers    PriceTier[]         @relation("UpdatedPriceTiers")
   createdPayments Payment[]
-  join            Join[]              @relation("UserJoins")
+  joinDeals       JoinDeal[]          @relation("UserJoinDeals")
 
   @@map("users")
 }
@@ -78,7 +80,6 @@ model Seller {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  // Relations
   deals Deal[]
 
   @@map("sellers")
@@ -90,7 +91,6 @@ model Category {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  // Relations
   deals Deal[]
 
   @@map("categories")
@@ -107,45 +107,40 @@ model Deal {
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
 
-  // Foreign Keys
   category_id String
   seller_id   String
   creator     String
   updater     String?
 
-  // Relations
-  category      Category   @relation(fields: [category_id], references: [id])
-  seller        Seller     @relation(fields: [seller_id], references: [id])
-  createdByUser User       @relation("CreatedDeals", fields: [creator], references: [id])
-  updatedByUser User?      @relation("UpdatedDeals", fields: [updater], references: [id])
-  tiers         Tier[]
-  joins         Join[]
-  waitlists     Waitlist[]
+  category      Category    @relation(fields: [category_id], references: [id])
+  seller        Seller      @relation(fields: [seller_id], references: [id])
+  createdByUser User        @relation("CreatedDeals", fields: [creator], references: [id])
+  updatedByUser User?       @relation("UpdatedDeals", fields: [updater], references: [id])
+  pricetiers    PriceTier[]
+  joindeals     JoinDeal[]
 
   @@map("deals")
 }
 
-model Tier {
+model PriceTier {
   id               String   @id @default(uuid())
   min_participants Int
   price            Float
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
 
-  // Foreign Keys
   deal_id String
   creator String
   updater String?
 
-  // Relations
   deal          Deal  @relation(fields: [deal_id], references: [id])
-  createdByUser User  @relation("CreatedTiers", fields: [creator], references: [id])
-  updatedByUser User? @relation("UpdatedTiers", fields: [updater], references: [id])
+  createdByUser User  @relation("CreatedPriceTiers", fields: [creator], references: [id])
+  updatedByUser User? @relation("UpdatedPriceTiers", fields: [updater], references: [id])
 
-  @@map("tiers")
+  @@map("pricetiers")
 }
 
-model Join {
+model JoinDeal {
   id                   String              @id @default(uuid())
   participation_status ParticipationStatus
   max_participants     Int
@@ -156,68 +151,46 @@ model Join {
   created_at           DateTime            @default(now())
   updated_at           DateTime            @updatedAt
 
-  // Foreign Keys
   user_id String
   deal_id String
 
-  // Relations
-  user    User     @relation("UserJoins", fields: [user_id], references: [id])
-  deal    Deal     @relation(fields: [deal_id], references: [id])
-  payment Payment?
+  user     User      @relation("UserJoinDeals", fields: [user_id], references: [id])
+  deal     Deal      @relation(fields: [deal_id], references: [id])
+  payments Payment[] @relation("JoinDealPayments")
 
-  @@map("joins")
+  @@map("joindeals")
 }
 
 model Payment {
   id             String        @id @default(uuid())
   amount         Float
-  method         Method
+  payment_method PaymentMethod
   payment_status PaymentStatus @default(PENDING)
   created_at     DateTime      @default(now())
 
-  // Foreign Keys
-  join_id String @unique
   creator String
 
-  // Relations
-  join            Join             @relation(fields: [join_id], references: [id])
-  createdByUser   User             @relation(fields: [creator], references: [id])
-  transactionLogs TransactionLog[]
+  createdByUser  User             @relation(fields: [creator], references: [id])
+  paymentHistory PaymentHistory[] @relation("PaymentHistories")
+
+  joinDeal     JoinDeal? @relation("JoinDealPayments", fields: [join_deal_id], references: [id])
+  join_deal_id String?
 
   @@map("payments")
 }
 
-model TransactionLog {
-  id         String   @id @default(uuid())
-  amount     Float
-  status     String
-  notes      String?
-  created_at DateTime @default(now())
+model PaymentHistory {
+  id             String        @id @default(uuid())
+  amount         Float
+  payment_status PaymentStatus
+  notes          String?
+  created_at     DateTime      @default(now())
 
-  // Foreign Keys
   payment_id String
 
-  // Relations
-  payment Payment @relation(fields: [payment_id], references: [id])
+  payment Payment @relation("PaymentHistories", fields: [payment_id], references: [id])
 
   @@map("transaction_logs")
-}
-
-model Waitlist {
-  id         String   @id @default(uuid())
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  // Foreign Keys
-  user_id String
-  deal_id String
-
-  // Relations
-  user User @relation(fields: [user_id], references: [id])
-  deal Deal @relation(fields: [deal_id], references: [id])
-
-  @@unique([user_id, deal_id])
-  @@map("waitlists")
 }
 
 model TrustScore {
@@ -226,10 +199,8 @@ model TrustScore {
   reason     String
   created_at DateTime @default(now())
 
-  // Foreign Keys
   user_id String
 
-  // Relations
   user User @relation(fields: [user_id], references: [id])
 
   @@map("trust_scores")
@@ -242,11 +213,21 @@ model NotificationTable {
   read_at    DateTime?
   created_at DateTime  @default(now())
 
-  // Foreign Keys
   user_id String
 
-  // Relations
   user User @relation(fields: [user_id], references: [id])
 
   @@map("notifications")
+}
+
+model Otp {
+  id         String   @id @default(uuid())
+  email      String
+  otp_code   String
+  otp_type   OtpType
+  used       Boolean  @default(false)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@index([email])
 }
