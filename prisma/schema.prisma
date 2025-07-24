@@ -113,7 +113,7 @@ model Deal {
   updater     String?
 
   category      Category    @relation(fields: [category_id], references: [id])
-  seller        Seller      @relation(fields: [seller_id], references: [id])
+  seller        Seller?     @relation(fields: [seller_id], references: [id])
   createdByUser User        @relation("CreatedDeals", fields: [creator], references: [id])
   updatedByUser User?       @relation("UpdatedDeals", fields: [updater], references: [id])
   pricetiers    PriceTier[]
