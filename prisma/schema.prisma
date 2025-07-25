@@ -238,3 +238,13 @@ model Image {
   deal      Deal?   @relation(fields: [dealId], references: [id])
   dealId    String?
 }
+
+model ContactMessage {
+  id         String   @id @default(uuid())
+  name       String
+  email      String
+  tel_number Int
+  message    String
+  created_at DateTime @default(now())
+  is_read    Boolean @default(false)
+}
