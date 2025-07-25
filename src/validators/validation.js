@@ -9,7 +9,7 @@ export const registerSchema = object({
 
 export const loginSchema = object({
   email : string().required("please enter your email"),
-  password : string().required.apply("please enter password")
+  password : string().required("please enter password")
 })
 export const validate = (schema) => async (req, res, next) => {
   try {
