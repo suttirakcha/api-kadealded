@@ -100,7 +100,6 @@ model Deal {
   id          String     @id @default(uuid())
   title       String
   description String
-  image_url   String?
   deal_status DealStatus @default(PRE_OPEN)
   start_at    DateTime
   deadline    DateTime
@@ -118,6 +117,7 @@ model Deal {
   updatedByUser User?       @relation("UpdatedDeals", fields: [updater], references: [id])
   pricetiers    PriceTier[]
   joindeals     JoinDeal[]
+  images        Image[]
 
   @@map("deals")
 }
@@ -230,4 +230,11 @@ model Otp {
   created_at DateTime @default(now())
 
   @@index([email])
+}
+
+model Image {
+  id        String  @id @default(uuid())
+  image_url String
+  deal      Deal?   @relation(fields: [dealId], references: [id])
+  dealId    String?
 }
