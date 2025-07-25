@@ -1,8 +1,24 @@
+import prisma from "../config/prisma.js"
 import * as adminService from "../services/admin.service.js"
+import { createErrorUtil } from "../utils/createError.util.js";
 
 export const createDeal = async (req, res, next) => {
   try {
     const data = req.body
+
+    // Check whether the user role is admin or not, will paste with other controllers
+    // Put the ? after 'user' to avoid the error
+    // user.role = will throw the error if user is not found
+    // user?.role = will return null if user is not found
+    const { id } = req.user;
+    const user = await prisma.user.findUnique({ 
+      where: { id }
+    })
+
+    if (user?.role !== "ADMIN"){
+      createErrorUtil(403, "Only admins can create the deal");
+    }
+
     const result = await adminService.createDeal(data)
     res.status(201).json({message: "Deal Created", result})
   } catch (error) {
