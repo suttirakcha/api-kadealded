@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { createErrorUtil } from "../utils/createError.util";
+import { createErrorUtil } from "../utils/createError.util.js";
 
 export const authUserCheck = (req, res, next) => {
   try {
@@ -13,6 +13,7 @@ export const authUserCheck = (req, res, next) => {
       if (error) {
         createErrorUtil(401, "Unauthorized Token");
       }
+
       req.user = decode;
     });
     next();

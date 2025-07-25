@@ -1,4 +1,4 @@
-import { getAllDeal } from "../services/user.service";
+import { getAllDeal } from "../services/user.service.js";
 
 export const getAll = async (req, res, next) => {
   try {
