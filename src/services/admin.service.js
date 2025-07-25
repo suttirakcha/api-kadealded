@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { createErrorUtil } from "../utils/createError.util.js";
 
 export const createDeal = async (data) => {
   const result = await prisma.deal.create({ data });
@@ -13,7 +14,10 @@ export const updateDeal = async (id, data) => {
   return result;
 };
 
-export const deleteDeal = async (id) => {
+export const deleteDeal = async (id, user) => {
+  if(user.role !== "SUPERADMIN") {
+    createErrorUtil("You Cannot Delete Deal")
+  }
   const result = await prisma.deal.delete({
     where: { id },
   });
