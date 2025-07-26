@@ -15,8 +15,8 @@ export const updateDeal = async (id, data) => {
 };
 
 export const deleteDeal = async (id, user) => {
-  if(user.role !== "SUPERADMIN") {
-    createErrorUtil("You Cannot Delete Deal")
+  if (user.role !== "SUPERADMIN") {
+    createErrorUtil("You Cannot Delete Deal");
   }
   const result = await prisma.deal.delete({
     where: { id },
@@ -70,30 +70,115 @@ export const rejectRefundRequest = async (joinId) => {
   return result;
 };
 
-export const getAllStatistics = async () => {
-  const totalDeals = await prisma.deal.count();
-  const totalUsers = await prisma.user.count({
+export const countTotalDeals = async () => {
+  return await prisma.deal.count();
+};
+
+export const countTotalCustomers = async () => {
+  return await prisma.user.count({
     where: { role: "CUSTOMER" },
   });
-  const totalJoins = await prisma.joinDeal.count();
-  const totalConfirmed = await prisma.joinDeal.count({
+};
+
+export const countTotalConfirmed = async () => {
+  return await prisma.joinDeal.count({
     where: { confirm_at: { not: null } },
   });
-  const totalCoins = await prisma.payment.aggregate({
+};
+
+export const countTotalJoinDeals = async () => {
+  return await prisma.joinDeal.count();
+};
+
+export const sumTotalCoins = async () => {
+  const result = await prisma.payment.aggregate({
     _sum: { amount: true },
   });
+  return result._sum.amount || 0;
+};
 
-  const topDeals = await prisma.joinDeal.groupBy({
+export const getTopDeals = async () => {
+  return await prisma.joinDeal.groupBy({
     by: ["deal_id"],
     _count: { deal_id: true },
     orderBy: { _count: { deal_id: "desc" } },
   });
+};
+
+export const getAlmostExpiredDeals = async () => {
+  return await prisma.deal.count({
+    where: {
+      deadline: {
+        lte: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // expired in 2 days
+        gte: new Date(),
+      },
+    },
+  });
+};
+
+export const getCancelledDeals = async () => {
+  return await prisma.deal.count({
+    where: {
+      deal_status: {
+        in: ["CANCELLED"],
+      },
+    },
+  });
+};
+
+export const getExpiredDeals = async () => {
+  return await prisma.deal.count({
+    where: {
+      deal_status: {
+        in: ["EXPIRED"],
+      },
+    },
+  });
+};
+
+export const getNewCustomersThisWeek = async () => {
+  return await prisma.user.count({
+    where: {
+      role: "CUSTOMER",
+      created_at: {
+        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // last 7 days
+      },
+    },
+  });
+};
+
+export const getPendingPayments = async () => {
+  return await prisma.payment.count({
+    where: {
+      payment_status: "PENDING",
+    },
+  });
+};
+
+export const getAllStats = async () => {
+  const totalDeals = await countTotalDeals();
+  const totalCustomers = await countTotalCustomers();
+  const totalJoinDeals = await countTotalJoinDeals();
+  const totalConfirmed = await countTotalConfirmed();
+  const totalCoinsUsed = await sumTotalCoins();
+  const topDeals = await getTopDeals();
+  const almostExpiredDeals = await getAlmostExpiredDeals();
+  const cancelledDeals = await getCancelledDeals();
+  const expiredDeals = await getExpiredDeals();
+  const newCustomersThisWeek = await getNewCustomersThisWeek();
+  const pendingPayments = await getPendingPayments();
+
   return {
     totalDeals,
-    totalUsers,
-    totalJoins,
+    totalCustomers,
+    totalJoinDeals,
     totalConfirmed,
-    totalCoinsUsed: totalCoins._sum.amount || 0,
+    totalCoinsUsed,
     topDeals,
+    almostExpiredDeals,
+    cancelledDeals,
+    expiredDeals,
+    newCustomersThisWeek,
+    pendingPayments,
   };
 };
