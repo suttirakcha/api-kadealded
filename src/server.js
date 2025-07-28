@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cors from "cors";
 import { notFoundUtil } from "./utils/notFound.util.js";
 import { errorUtil } from "./utils/error.util.js";
 import adminRouter from "./routers/adminRouter.js";
@@ -12,6 +13,11 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 8000;
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 app.use(morgan("dev"));
 app.use(express.json());
