@@ -19,7 +19,8 @@ export const getAllDeal = async () => {
   return result;
 };
 
-export const getDealById = async (id) => {
+export const getDealById = async (data) => {
+  const { id } = data;
   const result = await prisma.deal.findFirst({
     where: {
       id,
@@ -32,3 +33,15 @@ export const getDealById = async (id) => {
   });
   return result;
 };
+export const getProfile = async (data) => {
+  const { id } = data;
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  return result
+};
+export const topUpCoins = async() => {
+  
+}

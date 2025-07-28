@@ -69,8 +69,21 @@ model User {
   updatedTiers    PriceTier[]         @relation("UpdatedPriceTiers")
   createdPayments Payment[]
   joinDeals       JoinDeal[]          @relation("UserJoinDeals")
+  CoinTransaction CoinTransaction[]
 
   @@map("users")
+}
+
+model CoinTransaction {
+  id         String              @id @default(uuid())
+  user_id    String
+  amount     Int
+  type       CoinTransactionType
+  created_at DateTime            @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("coin_transactions")
 }
 
 model Seller {
@@ -243,8 +256,8 @@ model ContactMessage {
   id         String   @id @default(uuid())
   name       String
   email      String
-  tel_number Int
+  tel_number String
   message    String
   created_at DateTime @default(now())
-  is_read    Boolean @default(false)
+  is_read    Boolean  @default(false)
 }
