@@ -1,7 +1,6 @@
 import prisma from "../config/prisma.js";
 import { createErrorUtil } from "../utils/createError.util.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export const registerService = async (data) => {
   console.log("data", data);
@@ -33,6 +32,9 @@ export const login = async (data) => {
     where: {
       email,
     },
+    omit: {
+      refreshToken: true,
+    },
   });
 
   if (!user) {
@@ -45,12 +47,6 @@ export const login = async (data) => {
     createErrorUtil(400, "Email or Password invalid");
   }
 
-  const payload = {
-    id: user.id,
-    role: user.role,
-  };
-
-  const token = jwt.sign(payload, process.env.SECRET,{ expiresIn: "1d" });
   delete user.password;
-  return {user,token}
+  return { user };
 };
