@@ -256,7 +256,7 @@ model ContactMessage {
   id         String   @id @default(uuid())
   name       String
   email      String
-  tel_number Int
+  tel_number String
   message    String
   created_at DateTime @default(now())
   is_read    Boolean  @default(false)
