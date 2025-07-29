@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { notFoundUtil } from "./utils/notFound.util.js";
 import { errorUtil } from "./utils/error.util.js";
 import adminRouter from "./routers/adminRouter.js";
@@ -21,6 +22,7 @@ app.use(cors({
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api", authUserRouter);
 app.use("/admin", adminRouter);
