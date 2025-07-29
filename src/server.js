@@ -8,6 +8,7 @@ import { errorUtil } from "./utils/error.util.js";
 import adminRouter from "./routers/adminRouter.js";
 import authUserRouter from "./routers/authUserRouter.js";
 import userRouter from "./routers/userRouter.js";
+import contactRoute from "./routers/contactUsRouter.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use("/api", authUserRouter);
 app.use("/admin", adminRouter);
 app.use("/api", userRouter);
+app.use("/api", contactRoute);
 
 app.use(notFoundUtil);
 app.use(errorUtil);
