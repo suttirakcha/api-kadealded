@@ -1,24 +1,56 @@
-import jwt from "jsonwebtoken";
 import { createErrorUtil } from "../utils/createError.util.js";
+import prisma from "../config/prisma.js";
+import { generateAccessToken, generateRefreshToken, verifyToken } from "../utils/jwt.js";
 
-export const authUserCheck = (req, res, next) => {
+export const authUserCheck = async (req, res, next) => {
+  const header = req.headers.authorization;
+  const accessToken = header?.split(" ")[1];
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!accessToken){
+    createErrorUtil(401, "Missing token");
+  }
+
   try {
-    const header = req.headers.authorization;
-    console.log("header", header);
-    if (!header) {
-      createErrorUtil(401, "token is missing");
+    const decoded = verifyToken(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded;
+    return next();
+  } catch (error){
+    if (error.name !== "TokenExpiredError" || !refreshToken){
+      createErrorUtil(401, "Invalid or expired token");
     }
-    const token = header.split(" ")[1];
-    jwt.verify(token, process.env.SECRET, (error, decode) => {
-      if (error) {
-        createErrorUtil(401, "Unauthorized Token");
-      }
+  }
 
-      req.user = decode;
+  try {
+    const refreshDecoded = verifyToken(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await prisma.user.findUnique({ 
+      where: { id: refreshDecoded.id }
     });
+
+    if (!user || user.refreshToken !== refreshToken){
+      createErrorUtil(403, "Invalid token");
+    }
+
+    const newAccessToken = generateAccessToken(user.id);
+    const newRefreshToken = generateRefreshToken(user.id);
+
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: newRefreshToken }
+    });
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.setHeader("x-access-token", newAccessToken);
+    req.user = refreshDecoded;
     next();
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };

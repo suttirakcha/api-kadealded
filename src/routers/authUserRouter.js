@@ -6,5 +6,4 @@ const authUserRouter = express.Router();
 authUserRouter.post('/register',validate(registerSchema),registerController)
 authUserRouter.post('/login',validate(loginSchema),loginController)
 
-
 export default authUserRouter;
