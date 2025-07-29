@@ -26,24 +26,32 @@ import uploadMiddleware from "../middlewares/upload.middleware.js";
 
 const adminRouter = express.Router();
 
-adminRouter.post("/deals",authUserCheck,checkRole(["ADMIN", "SUPERADMIN"]),uploadMiddleware.array('image',5),createDeal);
-adminRouter.put("/deal/:id",authUserCheck,checkRole(["ADMIN", "SUPERADMIN"]),uploadMiddleware.array('image',5),updateDeal);
-adminRouter.delete("/deal/:id",authUserCheck,checkRole(["SUPERADMIN"]),uploadMiddleware.array('image',5),deleteDeal);
-adminRouter.get("/deals/:id/joiners",authUserCheck,checkRole(["ADMIN", "SUPERADMIN"]), getAllDealJoiner);
-adminRouter.get("/confirmations",authUserCheck,checkRole(["ADMIN", "SUPERADMIN"]),getAllConfirmations);
-adminRouter.post("/confirmations/:joinId/approve",authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]),approveRefundRequest);
-adminRouter.post("/confirmations/:joinId/reject",authUserCheck,checkRole(["ADMIN", "SUPERADMIN"]),rejectRefundRequest);
-adminRouter.get("/stats",authUserCheck,checkRole(["ADMIN", "SUPERADMIN"]),getAllStats);
-adminRouter.get("/stats/deals-total", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), countTotalDeals)
-adminRouter.get("/stats/customers-total", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), countTotalCustomers)
-adminRouter.get("/stats/joins-total", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), countTotalConfirmed)
-adminRouter.get("/stats/confirmed-total", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), countTotalJoinDeals)
-adminRouter.get("/stats/conis-used", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), sumTotalCoins)
-adminRouter.get("/stats/top-deals", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), getTopDeals)
-adminRouter.get("/stats/almost-expired", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), getAlmostExpiredDeals)
-adminRouter.get("/stats/cancelled", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), getCancelledDeals)
-adminRouter.get("/stats/expired", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), getExpiredDeals)
-adminRouter.get("/stats/new-customers-week", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), getNewCustomersThisWeek)
-adminRouter.get("/stats/pending-payments", authUserCheck, checkRole(["ADMIN", "SUPERADMIN"]), getPendingPayments)
+adminRouter.use(authUserCheck);
+adminRouter.use(checkRole(["ADMIN", "SUPERADMIN"]));
+
+adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
+adminRouter.put("/deal/:id", uploadMiddleware.array("image", 5), updateDeal);
+adminRouter.delete(
+  "/deal/:id",
+  checkRole(["SUPERADMIN"]),
+  uploadMiddleware.array("image", 5),
+  deleteDeal
+);
+adminRouter.get("/deals/:id/joiners", getAllDealJoiner);
+adminRouter.get("/confirmations", getAllConfirmations);
+adminRouter.post("/confirmations/:joinId/approve", approveRefundRequest);
+adminRouter.post("/confirmations/:joinId/reject", rejectRefundRequest);
+adminRouter.get("/stats", getAllStats);
+adminRouter.get("/stats/deals-total", countTotalDeals);
+adminRouter.get("/stats/customers-total", countTotalCustomers);
+adminRouter.get("/stats/joins-total", countTotalConfirmed);
+adminRouter.get("/stats/confirmed-total", countTotalJoinDeals);
+adminRouter.get("/stats/conis-used", sumTotalCoins);
+adminRouter.get("/stats/top-deals", getTopDeals);
+adminRouter.get("/stats/almost-expired", getAlmostExpiredDeals);
+adminRouter.get("/stats/cancelled", getCancelledDeals);
+adminRouter.get("/stats/expired", getExpiredDeals);
+adminRouter.get("/stats/new-customers-week", getNewCustomersThisWeek);
+adminRouter.get("/stats/pending-payments", getPendingPayments);
 
 export default adminRouter;
