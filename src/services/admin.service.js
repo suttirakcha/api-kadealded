@@ -33,6 +33,10 @@ export const updateDeal = async (id, data) => {
   const result = await prisma.deal.update({
     where: { id },
     data,
+    include: {
+      seller: true,
+      createdByUser: true,
+    }
   });
   return result;
 };
@@ -52,46 +56,47 @@ export const getAllDealJoiner = async (dealId) => {
     where: { deal_id: dealId },
     include: {
       user: true,
+      deal: true
     },
   });
   return result;
 };
 
-export const getAllConfirmations = async () => {
-  const result = await prisma.joinDeal.findMany({
-    where: {
-      confirm_at: {
-        not: null,
-      },
-    },
-    include: {
-      user: true,
-      deal: true,
-      payments: true,
-    },
-  });
-  return result;
-};
+// export const getAllConfirmations = async () => {
+//   const result = await prisma.joinDeal.findMany({
+//     where: {
+//       confirm_at: {
+//         not: null,
+//       },
+//     },
+//     include: {
+//       user: true,
+//       deal: true,
+//       payments: true,
+//     },
+//   });
+//   return result;
+// };
 
-export const approveRefundRequest = async (joinId) => {
-  const result = await prisma.joinDeal.update({
-    where: { id: joinId },
-    data: {
-      confirm_at: new Date(),
-    },
-  });
-  return result;
-};
+// export const approveRefundRequest = async (joinId) => {
+//   const result = await prisma.joinDeal.update({
+//     where: { id: joinId },
+//     data: {
+//       confirm_at: new Date(),
+//     },
+//   });
+//   return result;
+// };
 
-export const rejectRefundRequest = async (joinId) => {
-  const result = await prisma.joinDeal.update({
-    where: { id: joinId },
-    data: {
-      confirm_at: null,
-    },
-  });
-  return result;
-};
+// export const rejectRefundRequest = async (joinId) => {
+//   const result = await prisma.joinDeal.update({
+//     where: { id: joinId },
+//     data: {
+//       confirm_at: null,
+//     },
+//   });
+//   return result;
+// };
 
 export const countTotalDeals = async () => {
   return await prisma.deal.count();
