@@ -1,7 +1,10 @@
 import {
   getAllDeal,
+  getCoinsUser,
   getDealById,
+  getDealHistory,
   getProfile,
+  getQrCodeHistory,
 } from "../services/user.service.js";
 
 export const controllerGetAll = async (req, res, next) => {
@@ -31,4 +34,38 @@ export const controllerGetProfile = async (req, res, next) => {
     next(error);
   }
 };
-
+export const controllerTopUpCoins = async() => {
+  try {
+    
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+export const controllerGetCoinsUser = async(req,res,next) => {
+  try {
+    const result = await getCoinsUser(req.params.id)
+    res.status(200).json({result})
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+export const controllerGetDealHistory = async (req,res,next) => {
+  try {
+    const result = await getDealHistory(req.params.id)
+    res.status(200).json({result})
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+export const controllerGetQrCodeHistory = async(req,res,next) => {
+try {
+  const result = await getQrCodeHistory(req.params)
+  res.status(200).json({result})
+} catch (error) {
+  console.log(error)
+  next(error)
+}
+}
