@@ -1,6 +1,23 @@
 import prisma from "../config/prisma.js";
 import { createErrorUtil } from "../utils/createError.util.js";
 
+export const getAllDeals = async () => {
+  return prisma.deal.findMany({
+    include: {
+      category: true,
+      seller: true,
+      _count: {
+        select: {
+          joindeals: true,
+        },
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+};
+
 export const createDeal = async (data) => {
   const { sellerName, creatorName, ...rest } = data;
 
@@ -61,42 +78,6 @@ export const getAllDealJoiner = async (dealId) => {
   });
   return result;
 };
-
-// export const getAllConfirmations = async () => {
-//   const result = await prisma.joinDeal.findMany({
-//     where: {
-//       confirm_at: {
-//         not: null,
-//       },
-//     },
-//     include: {
-//       user: true,
-//       deal: true,
-//       payments: true,
-//     },
-//   });
-//   return result;
-// };
-
-// export const approveRefundRequest = async (joinId) => {
-//   const result = await prisma.joinDeal.update({
-//     where: { id: joinId },
-//     data: {
-//       confirm_at: new Date(),
-//     },
-//   });
-//   return result;
-// };
-
-// export const rejectRefundRequest = async (joinId) => {
-//   const result = await prisma.joinDeal.update({
-//     where: { id: joinId },
-//     data: {
-//       confirm_at: null,
-//     },
-//   });
-//   return result;
-// };
 
 export const countTotalDeals = async () => {
   return await prisma.deal.count();
@@ -211,6 +192,14 @@ export const getAllStats = async () => {
   };
 };
 
+export const getAllCategories = async () => {
+  return prisma.category.findMany({
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+};
+
 export const createCategory = (data) => {
   return prisma.category.create({ data });
 };
@@ -228,16 +217,14 @@ export const deleteCategory = (id) => {
   });
 };
 
-export const searchCategoryByName = (name) => {
-  return prisma.category.findMany({
-    where: {
-      name: {
-        contains: name,
-        mode: "insensitive",
-      },
-    },
-  });
-};
+
+export const getAllSellers = () => {
+  return prisma.seller.findMany({
+    orderBy: {
+      name: "desc"
+    }
+  })
+}
 
 export const createSeller = (data) => {
   return prisma.seller.create({ data });
@@ -256,13 +243,3 @@ export const deleteSeller = (id) => {
   });
 };
 
-export const searchSellerByName = (name) => {
-  return prisma.seller.findMany({
-    where: {
-      name: {
-        contains: name,
-        mode: "insensitive",
-      },
-    },
-  });
-};

@@ -4,19 +4,20 @@ import bcrypt from "bcryptjs";
 
 export const registerService = async (data) => {
   console.log("data", data);
-  const { name, email, password, birth_date } = data;
+  const { first_name, last_name, tel_number, email, password, birth_date } = data;
 
   const user = await prisma.user.findFirst({
     where: { email },
   });
   if (user) {
-    createErrorUtil(400, "User already exist !");
-    res.status(400).json({ message: "User already exist" });
+    createErrorUtil(400, "User Already Exist !");
   }
   const hash = bcrypt.hashSync(password, 10);
   const result = await prisma.user.create({
     data: {
-      name,
+      first_name,
+      last_name,
+      tel_number,
       email,
       password: hash,
       birth_date: new Date(birth_date),
