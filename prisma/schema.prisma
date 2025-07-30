@@ -58,6 +58,7 @@ model User {
   birth_date     DateTime?
   coin           Int       @default(0)
   trust_score_id Int?
+  profile_image  String?
   created_at     DateTime  @default(now())
   updated_at     DateTime  @updatedAt
   refreshToken   String?   @unique
