@@ -173,8 +173,6 @@ export const getPendingPayments = async (req, res, next) => {
   }
 }
 
-
-
 export const getAllStats = async (req, res, next) => {
   try {
     const result = await adminService.getAllStats();
@@ -183,3 +181,77 @@ export const getAllStats = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createCategory = async (req, res, next) => {
+  try {
+    const data = req.body
+    const result = await adminService.createCategory(data)
+    res.status(201).json({message: "Category Created", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const updateCategory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    const result = await adminService.updateCategory(id, data)
+    res.status(201).json({message: "Category Updated", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const deleteCategory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await adminService.deleteCategory(id)
+    res.status(200).json({message: "Category Deleted", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const searchCategoryByName = async (req, res, next) => {
+  try {
+    const result = await adminService.searchCategoryByName(req.query.name || "")
+    res.status(200).json({categories: result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const createSeller= async (req, res, next) => {
+  try {
+    const data = req.body
+    const result = await adminService.createSeller(data)
+    res.status(201).json({message: "Seller Created", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const updateSeller = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const data = req.body
+    const result = await adminService.updateSeller(id, data)
+    res.status(200).json({message: "Seller Updated", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const deleteSeller = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const result = await adminService.deleteSeller(id)
+    res.status(200).json({message: "Seller Deleted", result})
+  } catch (error) {
+    next(error)
+  }
+}
+export const searchSellerByName = async (req, res, next) => {
+  try {
+    const result = await adminService.searchSellerByName(req.query.name || "")
+    res.status(200).json({ sellers: result})
+  } catch (error) {
+    next(error)
+  }
+}

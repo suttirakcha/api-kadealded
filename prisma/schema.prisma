@@ -51,7 +51,9 @@ enum OtpType {
 
 model User {
   id             String    @id @default(uuid())
-  name           String
+  first_name     String
+  last_name      String
+  tel_number     String
   email          String    @unique
   password       String
   role           Role      @default(CUSTOMER)
@@ -90,11 +92,12 @@ model CoinTransaction {
 }
 
 model Seller {
-  id           String   @id @default(uuid())
-  name         String
-  contact_info String?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  email      String
+  tel_number String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   deals Deal[]
 
@@ -104,6 +107,7 @@ model Seller {
 model Category {
   id         String   @id @default(uuid())
   name       String   @unique
+  notes      String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

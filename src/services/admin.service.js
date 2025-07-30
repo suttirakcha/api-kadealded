@@ -36,7 +36,7 @@ export const updateDeal = async (id, data) => {
     include: {
       seller: true,
       createdByUser: true,
-    }
+    },
   });
   return result;
 };
@@ -56,7 +56,7 @@ export const getAllDealJoiner = async (dealId) => {
     where: { deal_id: dealId },
     include: {
       user: true,
-      deal: true
+      deal: true,
     },
   });
   return result;
@@ -209,4 +209,60 @@ export const getAllStats = async () => {
     newCustomersThisWeek,
     pendingPayments,
   };
+};
+
+export const createCategory = (data) => {
+  return prisma.category.create({ data });
+};
+
+export const updateCategory = (id, data) => {
+  return prisma.category.update({
+    where: { id },
+    data,
+  });
+};
+
+export const deleteCategory = (id) => {
+  return prisma.category.delete({
+    where: { id },
+  });
+};
+
+export const searchCategoryByName = (name) => {
+  return prisma.category.findMany({
+    where: {
+      name: {
+        contains: name,
+        mode: "insensitive",
+      },
+    },
+  });
+};
+
+export const createSeller = (data) => {
+  return prisma.seller.create({ data });
+};
+
+export const updateSeller = (id, data) => {
+  return prisma.seller.update({
+    where: { id },
+    data,
+  });
+};
+
+export const deleteSeller = (id) => {
+  return prisma.seller.delete({
+    where: { id },
+  });
+};
+
+export const searchSellerByName = (name) => {
+  return prisma.seller.findMany({
+    where: {
+      name: {
+        contains: name,
+        mode: "insensitive",
+      },
+    },
+  });
 };
