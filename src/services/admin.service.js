@@ -2,7 +2,26 @@ import prisma from "../config/prisma.js";
 import { createErrorUtil } from "../utils/createError.util.js";
 
 export const createDeal = async (data) => {
-  const result = await prisma.deal.create({ data });
+  const { sellerName, creatorName, ...rest } = data;
+
+  const seller = await prisma.seller.findFirst({
+    where: { name: sellerName },
+  });
+
+  const creator = await prisma.user.findFirst({
+    where: { name: creatorName },
+  });
+  if (!seller || !creator) {
+    createErrorUtil("Seller or Creator Not Found");
+  }
+
+  const result = await prisma.deal.create({
+    data: {
+      ...rest,
+      seller_id: seller.id,
+      creator: creator.id,
+    },
+  });
   return result;
 };
 
