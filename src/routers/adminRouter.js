@@ -30,17 +30,17 @@ adminRouter.use(authUserCheck);
 adminRouter.use(checkRole(["ADMIN", "SUPERADMIN"]));
 
 adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
-adminRouter.put("/deal/:id", uploadMiddleware.array("image", 5), updateDeal);
+adminRouter.put("/deals/:id", uploadMiddleware.array("image", 5), updateDeal);
 adminRouter.delete(
-  "/deal/:id",
+  "/deals/:id",
   checkRole(["SUPERADMIN"]),
   uploadMiddleware.array("image", 5),
   deleteDeal
 );
 adminRouter.get("/deals/:id/joiners", getAllDealJoiner);
 adminRouter.get("/confirmations", getAllConfirmations);
-adminRouter.post("/confirmations/:joinId/approve", approveRefundRequest);
-adminRouter.post("/confirmations/:joinId/reject", rejectRefundRequest);
+adminRouter.post("/confirmations/:joinId/approve", approveRefundRequest) // ต้องมีไหมนะ
+adminRouter.post("/confirmations/:joinId/reject", rejectRefundRequest); // ต้องมีไหมนะะะ
 adminRouter.get("/stats", getAllStats);
 adminRouter.get("/stats/deals-total", countTotalDeals);
 adminRouter.get("/stats/customers-total", countTotalCustomers);
