@@ -6,7 +6,7 @@ const result = await prisma.contactMessage.create({
   data : {
     name,
     email,
-    tel_number,
+    tel_number, 
     message,
   }
 })

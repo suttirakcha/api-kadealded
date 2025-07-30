@@ -134,6 +134,7 @@ model Deal {
   pricetiers    PriceTier[]
   joindeals     JoinDeal[]
   images        Image[]
+  qrCode        QrCode[]
 
   @@map("deals")
 }
@@ -266,11 +267,15 @@ model ContactMessage {
 }
 
 model QrCode {
-  id         String    @id @default(uuid())
-  token      String
-  user       User?     @relation(fields: [userId], references: [id])
-  userId     String?
+  id    String @id @default(uuid())
+  token String
+
   created_at DateTime  @default(now())
   expired_at DateTime?
   isUsed     Boolean   @default(false)
+  userId     String
+  dealId     String
+
+  deal Deal @relation(fields: [dealId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
