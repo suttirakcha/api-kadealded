@@ -2,7 +2,30 @@ import prisma from "../config/prisma.js";
 import { createErrorUtil } from "../utils/createError.util.js";
 
 export const createDeal = async (data) => {
-  const result = await prisma.deal.create({ data });
+  const { sellerName, creatorName, ...rest } = data;
+
+  const seller = await prisma.seller.findFirst({
+    where: { name: sellerName },
+  });
+
+  const creator = await prisma.user.findFirst({
+    where: { name: creatorName },
+  });
+  if (!seller || !creator) {
+    createErrorUtil("Seller or Creator Not Found");
+  }
+
+  const result = await prisma.deal.create({
+    data: {
+      ...rest,
+      seller_id: seller.id,
+      creator: creator.id,
+    },
+    include: {
+      seller: true,
+      createdByUser: true,
+    },
+  });
   return result;
 };
 
@@ -10,6 +33,10 @@ export const updateDeal = async (id, data) => {
   const result = await prisma.deal.update({
     where: { id },
     data,
+    include: {
+      seller: true,
+      createdByUser: true,
+    }
   });
   return result;
 };
@@ -29,46 +56,47 @@ export const getAllDealJoiner = async (dealId) => {
     where: { deal_id: dealId },
     include: {
       user: true,
+      deal: true
     },
   });
   return result;
 };
 
-export const getAllConfirmations = async () => {
-  const result = await prisma.joinDeal.findMany({
-    where: {
-      confirm_at: {
-        not: null,
-      },
-    },
-    include: {
-      user: true,
-      deal: true,
-      payments: true,
-    },
-  });
-  return result;
-};
+// export const getAllConfirmations = async () => {
+//   const result = await prisma.joinDeal.findMany({
+//     where: {
+//       confirm_at: {
+//         not: null,
+//       },
+//     },
+//     include: {
+//       user: true,
+//       deal: true,
+//       payments: true,
+//     },
+//   });
+//   return result;
+// };
 
-export const approveRefundRequest = async (joinId) => {
-  const result = await prisma.joinDeal.update({
-    where: { id: joinId },
-    data: {
-      confirm_at: new Date(),
-    },
-  });
-  return result;
-};
+// export const approveRefundRequest = async (joinId) => {
+//   const result = await prisma.joinDeal.update({
+//     where: { id: joinId },
+//     data: {
+//       confirm_at: new Date(),
+//     },
+//   });
+//   return result;
+// };
 
-export const rejectRefundRequest = async (joinId) => {
-  const result = await prisma.joinDeal.update({
-    where: { id: joinId },
-    data: {
-      confirm_at: null,
-    },
-  });
-  return result;
-};
+// export const rejectRefundRequest = async (joinId) => {
+//   const result = await prisma.joinDeal.update({
+//     where: { id: joinId },
+//     data: {
+//       confirm_at: null,
+//     },
+//   });
+//   return result;
+// };
 
 export const countTotalDeals = async () => {
   return await prisma.deal.count();
