@@ -21,6 +21,10 @@ export const createDeal = async (data) => {
       seller_id: seller.id,
       creator: creator.id,
     },
+    include: {
+      seller: true,
+      createdByUser: true,
+    },
   });
   return result;
 };
