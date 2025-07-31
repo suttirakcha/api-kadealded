@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { createErrorUtil } from "../utils/createError.util.js";
 
 export const checkRole =
   (user_role, statusCode, errorMessage) => (req, res) => {
@@ -58,37 +59,42 @@ export const getCoinsUser = async (data) => {
 };
 export const getDealHistory = async (data) => {
   const { id } = data;
-const result = await prisma.user.findUnique({
-  where: {
-    id,
-  },
-  include: {
-    joinDeals: {
-      include: {
-        qrCode: true, // ดึงทั้งหมดมาก่อน
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      joinDeals: {
+        include: {
+          qrCode: true, // ดึงทั้งหมดมาก่อน
+        },
       },
     },
-  },
-});
+  });
 
-// กรอง qrCode ที่ userId ตรงกับ req.user.id
-result.joinDeals = result.joinDeals.map(deal => ({
-  ...deal,
-  qrCode: deal.qrCode.filter(qr => qr.userId === req.user.id),
-}));
+  // กรอง qrCode ที่ userId ตรงกับ req.user.id
+  result.joinDeals = result.joinDeals.map((deal) => ({
+    ...deal,
+    qrCode: deal.qrCode.filter((qr) => qr.userId === req.user.id),
+  }));
   return result;
 };
 export const createQrCodeDeal = async (data) => {
   const {} = data;
 };
 
-export const getQrCodeHistory = async (data) => {
+export const updateUser = async (data) => {
   const { id } = data;
-  const result = await prisma.joinDeal.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       id,
     },
-
   });
- return result
+  if(!user){
+    createErrorUtil(400,"Not Found User")
+  }
+  const result = await prisma.user.update({
+    data
+  })
+  return result
 };
