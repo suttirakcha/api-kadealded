@@ -4,7 +4,6 @@ import {
   getDealById,
   getDealHistory,
   getProfile,
-  getQrCodeHistory,
   updateUser,
 } from "../services/user.service.js";
 
