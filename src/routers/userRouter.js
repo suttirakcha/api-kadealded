@@ -6,6 +6,7 @@ import {
   controllerGetDealHistory,
   controllerGetProfile,
   controllerGetQrCodeHistory,
+  controllerUpdateUser,
 } from "../controllers/user.Controller.js";
 import { authUserCheck } from "../middlewares/auth.middleware.js";
 import { refreshTokenController } from "../controllers/auth.controller.js";
@@ -19,5 +20,6 @@ userRouter.post("/refresh", refreshTokenController);
 userRouter.get("/auth/coins/history", authUserCheck, controllerGetCoinsUser);
 userRouter.get('/auth/deal/history',authUserCheck,controllerGetDealHistory)
 userRouter.get('/auth/deal/:id/qr',authUserCheck,controllerGetQrCodeHistory)
+userRouter.put('auth/update/profile',refreshTokenController,controllerUpdateUser)
 
 export default userRouter;
