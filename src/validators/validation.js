@@ -1,15 +1,17 @@
 import { object, ref, string } from "yup";
 
 export const registerSchema = object({
-  name: string().required("Enter your name"),
-  email: string().email().required("enter email"),
-  password: string().min(6).required("password is required"),
-  confirmPassword : string().oneOf([ref("password"),null]).required("confirmPassword is required")
+  first_name: string().required("Please Enter your First Name"),
+  last_name: string().required("Please Enter your Last Name"),
+  tel_number: string().required("Please Enter Your Telephone Number"),
+  email: string().email().required("Please Enter Your Email"),
+  password: string().min(6).required("Please Enter Your Password"),
+  confirmPassword : string().oneOf([ref("password"),null]).required("Password is not Matched")
 });
 
 export const loginSchema = object({
-  email : string().required("please enter your email"),
-  password : string().required("please enter password")
+  email : string().required("Please Enter Your Email"),
+  password : string().required("Please Enter Your Password")
 })
 export const validate = (schema) => async (req, res, next) => {
   try {

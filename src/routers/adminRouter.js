@@ -1,14 +1,19 @@
 import express from "express";
 import {
-  approveRefundRequest,
   countTotalConfirmed,
   countTotalCustomers,
   countTotalDeals,
   countTotalJoinDeals,
+  createCategory,
   createDeal,
+  createSeller,
+  deleteCategory,
   deleteDeal,
-  getAllConfirmations,
+  deleteSeller,
+  getAllCategories,
   getAllDealJoiner,
+  getAllDeals,
+  getAllSellers,
   getAllStats,
   getAlmostExpiredDeals,
   getCancelledDeals,
@@ -16,9 +21,10 @@ import {
   getNewCustomersThisWeek,
   getPendingPayments,
   getTopDeals,
-  rejectRefundRequest,
   sumTotalCoins,
+  updateCategory,
   updateDeal,
+  updateSeller,
 } from "../controllers/admin.controller.js";
 import { authUserCheck } from "../middlewares/auth.middleware.js";
 import { checkRole } from "../middlewares/checkRole.middleware.js";
@@ -29,18 +35,12 @@ const adminRouter = express.Router();
 adminRouter.use(authUserCheck);
 adminRouter.use(checkRole(["ADMIN", "SUPERADMIN"]));
 
+adminRouter.get("/deals", getAllDeals)
 adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
 adminRouter.put("/deals/:id", uploadMiddleware.array("image", 5), updateDeal);
-adminRouter.delete(
-  "/deals/:id",
-  checkRole(["SUPERADMIN"]),
-  uploadMiddleware.array("image", 5),
-  deleteDeal
-);
+adminRouter.delete("/deals/:id", checkRole(["SUPERADMIN"]), uploadMiddleware.array("image", 5), deleteDeal);
 adminRouter.get("/deals/:id/joiners", getAllDealJoiner);
-adminRouter.get("/confirmations", getAllConfirmations);
-adminRouter.post("/confirmations/:joinId/approve", approveRefundRequest) // ต้องมีไหมนะ
-adminRouter.post("/confirmations/:joinId/reject", rejectRefundRequest); // ต้องมีไหมนะะะ
+
 adminRouter.get("/stats", getAllStats);
 adminRouter.get("/stats/deals-total", countTotalDeals);
 adminRouter.get("/stats/customers-total", countTotalCustomers);
@@ -53,5 +53,15 @@ adminRouter.get("/stats/cancelled", getCancelledDeals);
 adminRouter.get("/stats/expired", getExpiredDeals);
 adminRouter.get("/stats/new-customers-week", getNewCustomersThisWeek);
 adminRouter.get("/stats/pending-payments", getPendingPayments);
+
+adminRouter.get("/categories", getAllCategories)
+adminRouter.post("/categories", createCategory);
+adminRouter.put("/categories/:id", updateCategory);
+adminRouter.delete("/categories/:id", checkRole(["SUPERADMIN"]), deleteCategory);
+
+adminRouter.get("/sellers", getAllSellers)
+adminRouter.post("/sellers", createSeller)
+adminRouter.put("/sellers/:id", updateSeller)
+adminRouter.delete("/sellers/:id",checkRole(["SUPERADMIN"]), deleteSeller )
 
 export default adminRouter;
