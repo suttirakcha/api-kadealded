@@ -94,7 +94,7 @@ model CoinTransaction {
 model Seller {
   id         String   @id @default(uuid())
   name       String
-  email      String
+  email      String   @unique
   tel_number String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
