@@ -19,16 +19,20 @@ export const getAllDeals = async () => {
 };
 
 export const createDeal = async (data) => {
-  const { sellerName, creatorName, ...rest } = data;
+  const { seller_name, creator_name, category_name, ...rest } = data;
 
   const seller = await prisma.seller.findFirst({
-    where: { name: sellerName },
+    where: { name: seller_name },
   });
 
   const creator = await prisma.user.findFirst({
-    where: { name: creatorName },
+    where: { name: creator_name },
   });
-  if (!seller || !creator) {
+
+  const category = await prisma.category.findFirst({
+    where: { name: category_name },
+  });
+  if (!seller || !creator || !category) {
     createErrorUtil("Seller or Creator Not Found");
   }
 
@@ -37,24 +41,55 @@ export const createDeal = async (data) => {
       ...rest,
       seller_id: seller.id,
       creator: creator.id,
+      category_id: category.id,
     },
     include: {
       seller: true,
       createdByUser: true,
+      category: true,
     },
   });
   return result;
 };
 
 export const updateDeal = async (id, data) => {
+  const { seller_name, creator_name, category_name, ...rest } = data;
+
+  const seller = seller_name
+    ? await prisma.seller.findFirst({ where: { name: seller_name } })
+    : null;
+
+  const creator = creator_name
+    ? await prisma.user.findFirst({ where: { name: creator_name } })
+    : null;
+
+  const category = category_name
+    ? await prisma.category.findFirst({ where: { name: category_name } })
+    : null;
+
+  if (
+    (seller_name && !seller) ||
+    (creator_name && !creator) ||
+    (category_name && !category)
+  ) {
+    throw createErrorUtil("Seller, Creator, or Category Not Found");
+  }
+
   const result = await prisma.deal.update({
     where: { id },
-    data,
+    data: {
+      ...rest,
+      ...(seller && { seller_id: seller.id }),
+      ...(creator && { creator: creator.id }),
+      ...(category && { category_id: category.id }),
+    },
     include: {
       seller: true,
       createdByUser: true,
+      category: true,
     },
   });
+
   return result;
 };
 
@@ -217,14 +252,13 @@ export const deleteCategory = (id) => {
   });
 };
 
-
 export const getAllSellers = () => {
   return prisma.seller.findMany({
     orderBy: {
-      name: "desc"
-    }
-  })
-}
+      name: "desc",
+    },
+  });
+};
 
 export const createSeller = (data) => {
   return prisma.seller.create({ data });
@@ -242,4 +276,3 @@ export const deleteSeller = (id) => {
     where: { id },
   });
 };
-
