@@ -1,5 +1,5 @@
-export const createErrorUtil = (code, message) => {
+export const createErrorUtil = (message, status = 400) => {
   const error = new Error(message);
-  error.code = code;
+  error.status = status;
   throw error;
 };
