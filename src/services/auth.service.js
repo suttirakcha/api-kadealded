@@ -6,7 +6,7 @@ export const registerService = async (data) => {
   console.log("data", data);
   const { first_name, last_name, tel_number, email, password, birth_date } = data;
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: { email },
   });
   if (user) {
@@ -29,7 +29,7 @@ export const registerService = async (data) => {
 export const login = async (data) => {
   const { email, password } = data;
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
       email,
     },
