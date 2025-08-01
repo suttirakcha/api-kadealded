@@ -10,6 +10,7 @@ import authUserRouter from "./routers/authUserRouter.js";
 import userRouter from "./routers/userRouter.js";
 import contactRoute from "./routers/contactUsRouter.js";
 import otpRouter from "./routers/otpRouter.js";
+import { getAllDealJoiner } from "./controllers/admin.controller.js";
 
 dotenv.config();
 
