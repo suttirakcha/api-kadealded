@@ -1,7 +1,7 @@
 import express from "express";
 import {
   controllerGetAll,
-  controllerGetAllDealById,
+  controllerGetDealById,
   controllerGetCoinsUser,
   controllerGetDealHistory,
   controllerGetProfile,
@@ -14,7 +14,7 @@ import { refreshTokenController } from "../controllers/auth.controller.js";
 const userRouter = express.Router();
 
 userRouter.get("/deal", controllerGetAll);
-userRouter.get("/deal/:id", controllerGetAllDealById);
+userRouter.get("/deal/:id", controllerGetDealById);
 userRouter.get("/auth/profile", authUserCheck, controllerGetProfile);
 userRouter.post("/refresh", refreshTokenController);
 userRouter.get("/auth/coins/history", authUserCheck, controllerGetCoinsUser);

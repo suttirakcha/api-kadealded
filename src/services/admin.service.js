@@ -33,7 +33,7 @@ export const createDeal = async (data) => {
     where: { name: category_name },
   });
   if (!seller || !creator || !category) {
-    createErrorUtil("Seller or Creator Not Found");
+    createErrorUtil(400, "Seller or Creator Not Found");
   }
 
   const result = await prisma.deal.create({
@@ -72,7 +72,7 @@ export const updateDeal = async (id, data) => {
     (creator_name && !creator) ||
     (category_name && !category)
   ) {
-    throw createErrorUtil("Seller, Creator, or Category Not Found");
+    throw createErrorUtil(400, "Seller, Creator, or Category Not Found");
   }
 
   const result = await prisma.deal.update({
@@ -95,7 +95,7 @@ export const updateDeal = async (id, data) => {
 
 export const deleteDeal = async (id, user) => {
   if (user.role !== "SUPERADMIN") {
-    createErrorUtil("You Cannot Delete Deal");
+    createErrorUtil(400, "You Cannot Delete Deal");
   }
   const result = await prisma.deal.delete({
     where: { id },

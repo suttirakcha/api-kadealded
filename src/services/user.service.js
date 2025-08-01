@@ -20,8 +20,7 @@ export const getAllDeal = async () => {
   return result;
 };
 
-export const getDealById = async (data) => {
-  const { id } = data;
+export const getDealById = async (id) => {
   const result = await prisma.deal.findFirst({
     where: {
       id,

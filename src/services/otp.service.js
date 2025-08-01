@@ -31,7 +31,7 @@ export const verifyOtp = async (email, otp_code, otp_type) => {
   });
 
   if (!otp) {
-    createErrorUtil("Invalid or Expired OTP");
+    createErrorUtil(400, "Invalid or Expired OTP");
   }
 
   await prisma.otp.update({
