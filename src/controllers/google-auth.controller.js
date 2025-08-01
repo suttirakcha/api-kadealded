@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -16,8 +17,7 @@ async function findOrCreateUser(userData) {
   };
 }
 
-
-export const loginWithGoogle = async (req, res) => {
+export const loginWithGoogle = async (req, res, next) => {
   const { code } = req.body;
 
   try {
@@ -39,7 +39,6 @@ export const loginWithGoogle = async (req, res) => {
 
     res.json({ token: appToken, user });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Google login failed' });
+    next(err);
   }
 };
