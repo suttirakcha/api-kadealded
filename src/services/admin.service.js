@@ -235,11 +235,29 @@ export const getAllCategories = async () => {
   });
 };
 
-export const createCategory = (data) => {
+export const createCategory = async (data) => {
+  const existCategory = await prisma.category.findUnique({
+    where: { name: data.name },
+  });
+  if (existCategory) {
+    createErrorUtil(400, "Category Name Already Exists");
+  }
+
   return prisma.category.create({ data });
 };
 
-export const updateCategory = (id, data) => {
+export const updateCategory = async (id, data) => {
+  const existCategory = await prisma.category.findUnique({
+    where: {
+      name: data.name,
+      NOT: { id },
+    },
+  });
+
+  if (existCategory) {
+    createErrorUtil(400, "Category Name Already Exists");
+  }
+
   return prisma.category.update({
     where: { id },
     data,
@@ -260,11 +278,31 @@ export const getAllSellers = () => {
   });
 };
 
-export const createSeller = (data) => {
+export const createSeller = async (data) => {
+  const existSeller = await prisma.seller.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
+  if (existSeller) {
+    createErrorUtil(400, "Seller's Email Already Exists");
+  }
+
   return prisma.seller.create({ data });
 };
 
-export const updateSeller = (id, data) => {
+export const updateSeller = async (id, data) => {
+  const existSeller = await prisma.seller.findUnique({
+    where: {
+      email: data.email,
+      NOT: { id },
+    },
+  });
+
+  if (existSeller) {
+    createErrorUtil(400, "Seller's Email Already Exists");
+  }
+
   return prisma.seller.update({
     where: { id },
     data,
