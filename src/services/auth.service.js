@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 export const registerService = async (data) => {
   console.log("data", data);
-  const { first_name, last_name, tel_number, email, password, birth_date } = data;
+  const { name, last_name, tel_number, email, password, birth_date } = data;
 
   const user = await prisma.user.findUnique({
     where: { email },
@@ -15,7 +15,7 @@ export const registerService = async (data) => {
   const hash = bcrypt.hashSync(password, 10);
   const result = await prisma.user.create({
     data: {
-      first_name,
+      name,
       last_name,
       tel_number,
       email,
