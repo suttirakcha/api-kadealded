@@ -117,14 +117,15 @@ model Category {
 }
 
 model Deal {
-  id          String     @id @default(uuid())
-  title       String
-  description String
-  deal_status DealStatus @default(PRE_OPEN)
-  start_at    DateTime
-  deadline    DateTime
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
+  id               String     @id @default(uuid())
+  title            String
+  description      String
+  deal_status      DealStatus @default(PRE_OPEN)
+  start_at         DateTime
+  deadline         DateTime
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  max_participants Int
 
   category_id String
   seller_id   String
@@ -164,7 +165,6 @@ model PriceTier {
 model JoinDeal {
   id                   String              @id @default(uuid())
   participation_status ParticipationStatus
-  max_participants     Int
   notes                String?
   joined_at            DateTime            @default(now())
   confirm_at           DateTime?
