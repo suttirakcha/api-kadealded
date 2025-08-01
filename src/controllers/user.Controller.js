@@ -16,9 +16,10 @@ export const controllerGetAll = async (req, res, next) => {
     next(error);
   }
 };
-export const controllerGetAllDealById = async (req, res, next) => {
+export const controllerGetDealById = async (req, res, next) => {
   try {
-    const result = await getDealById(req.params.id);
+    const { id } = req.params;
+    const result = await getDealById(id);
     res.status(200).json({ message: "Deal found", result });
   } catch (error) {
     console.log(error);
@@ -27,7 +28,8 @@ export const controllerGetAllDealById = async (req, res, next) => {
 };
 export const controllerGetProfile = async (req, res, next) => {
   try {
-    const result = await getProfile(req.params.id);
+    const { id } = req.params;
+    const result = await getProfile(id);
     res.status(200).json({ result });
   } catch (error) {
     console.log(error);
@@ -68,12 +70,12 @@ export const controllerGetQrCodeHistory = async (req, res, next) => {
     next(error);
   }
 };
-export const controllerUpdateUser = async(req,res,next) => {
+export const controllerUpdateUser = async (req, res, next) => {
   try {
-    const result = await updateUser(req.body)
-    res.status(200).json({result})
+    const result = await updateUser(req.body);
+    res.status(200).json({ result });
   } catch (error) {
-    console.log(error)
-    next(error)
+    console.log(error);
+    next(error);
   }
-}
+};
