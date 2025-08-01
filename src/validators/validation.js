@@ -1,7 +1,7 @@
 import { object, ref, string } from "yup";
 
 export const registerSchema = object({
-  first_name: string().required("Please Enter your First Name"),
+  name: string().required("Please Enter your First Name"),
   last_name: string().required("Please Enter your Last Name"),
   tel_number: string().required("Please Enter Your Telephone Number"),
   email: string().email().required("Please Enter Your Email"),

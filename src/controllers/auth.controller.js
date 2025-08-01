@@ -10,7 +10,7 @@ import {
 export const registerController = async (req, res, next) => {
   try {
     const result = await registerService(req.body);
-    res.status(201).json({ message: `Register K.${result.first_name} ${result.last_name} Successful` });
+    res.status(201).json({ message: `Register K.${result.name} ${result.last_name} Successful` });
   } catch (error) {
     console.log(error);
     next(error);
