@@ -39,7 +39,9 @@ adminRouter.get("/deals", getAllDeals)
 adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
 adminRouter.put("/deals/:id", uploadMiddleware.array("image", 5), updateDeal);
 adminRouter.delete("/deals/:id", checkRole(["SUPERADMIN"]), uploadMiddleware.array("image", 5), deleteDeal);
-adminRouter.get("/deals/:id/joiners", getAllDealJoiner);
+
+// NOT SURE THAT IT SHOULD STILL EXIST OR NOT, BECAUSE IT IS ALREADY ON THE authUserRouter.js FILE.
+adminRouter.get("/deals/:id/joiners", getAllDealJoiner)
 
 adminRouter.get("/stats", getAllStats);
 adminRouter.get("/stats/deals-total", countTotalDeals);
