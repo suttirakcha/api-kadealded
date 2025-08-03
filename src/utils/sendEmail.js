@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import "dotenv/config";
 
 console.log("DEBUG CHECK: EMAIL_USER loaded:", process.env.EMAIL_USER);
 console.log("DEBUG CHECK: EMAIL_PASS loaded (first 5 chars):", process.env.EMAIL_PASS ? process.env.EMAIL_PASS.substring(0, 5) + '...' : 'PASSWORD NOT LOADED');
