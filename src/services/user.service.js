@@ -82,8 +82,8 @@ export const createQrCodeDeal = async (data) => {
   const {} = data;
 };
 
-export const updateUser = async (data) => {
-  const { id } = data;
+export const updateUser = async (id, data) => {
+  // const { id } = data;
   const user = await prisma.user.findUnique({
     where: {
       id,
@@ -93,6 +93,7 @@ export const updateUser = async (data) => {
     createErrorUtil(400,"Not Found User")
   }
   const result = await prisma.user.update({
+    where: { id: user.id },
     data
   })
   return result
