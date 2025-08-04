@@ -12,7 +12,7 @@ export const sendOtp = async (req, res, next) => {
 
 export const verifyOtp = async (req, res, next) => {
   try {
-    const {email,otp_code, otp_type} = req.body
+    const {email, otp_code, otp_type} = req.body
     await otpService.verifyOtp(email, otp_code, otp_type)
     res.status(200).json({message: "OTP Verified !"})
   } catch (error) {
