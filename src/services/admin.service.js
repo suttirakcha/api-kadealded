@@ -332,7 +332,7 @@ export const getAllUsers = () => {
   });
 };
 
-export const updateUser = async (id, data) => {
+export const adminUpdateUser = async (id, data) => {
   const existUser = await prisma.user.findUnique({
     where: { id },
   });

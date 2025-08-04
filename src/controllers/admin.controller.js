@@ -246,11 +246,11 @@ export const getAllUsers = async (req, res, next) => {
   }
 }
 
-export const updateUser = async (req, res, next) => {
+export const adminUpdateUser = async (req, res, next) => {
   try {
     const {id} = req.params
     const data = req.body
-    const result = await adminService.updateUser(id, data)
+    const result = await adminService.adminUpdateUser(id, data)
     res.status(200).json({message: "User Updated", result})
   } catch (error) {
     next(error)
