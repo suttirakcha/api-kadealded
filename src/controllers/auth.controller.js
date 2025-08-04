@@ -9,7 +9,10 @@ import {
 
 export const registerController = async (req, res, next) => {
   try {
-    const result = await registerService(req.body);
+    const result = await registerService({
+      ...req.body,
+      profile_image: req.files,
+    });
     res
       .status(201)
       .json({

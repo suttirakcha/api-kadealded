@@ -42,7 +42,7 @@ adminRouter.put("/users/:id", checkRole(["SUPERADMIN"]), adminUpdateUser)
 adminRouter.get("/deals", getAllDeals)
 adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
 adminRouter.put("/deals/:id", uploadMiddleware.array("image", 5), updateDeal);
-adminRouter.delete("/deals/:id", checkRole(["SUPERADMIN"]), uploadMiddleware.array("image", 5), deleteDeal);
+adminRouter.delete("/deals/:id", checkRole(["SUPERADMIN"]), deleteDeal);
 
 adminRouter.get("/stats", getAllStats);
 adminRouter.get("/stats/deals-total", countTotalDeals);

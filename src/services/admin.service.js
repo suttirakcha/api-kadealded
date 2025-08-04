@@ -53,7 +53,11 @@ export const createDeal = async (data) => {
 };
 
 export const updateDeal = async (id, data) => {
-  const { seller_name, creator_name, category_name, ...rest } = data;
+  const deal = await prisma.deal.findUnique({ where: { id } });
+  if (!deal) {
+    createErrorUtil(404, "Deal Not Found");
+  }
+  const { seller_name, creator_name, category_name, images, ...rest } = data;
 
   const seller = seller_name
     ? await prisma.seller.findFirst({ where: { name: seller_name } })
@@ -64,7 +68,7 @@ export const updateDeal = async (id, data) => {
     : null;
 
   const category = category_name
-    ? await prisma.category.findFirst({ where: { name: category_name } })
+    ? await prisma.category.findUnique({ where: { name: category_name } })
     : null;
 
   if (
@@ -72,21 +76,42 @@ export const updateDeal = async (id, data) => {
     (creator_name && !creator) ||
     (category_name && !category)
   ) {
-    throw createErrorUtil(400, "Seller, Creator, or Category Not Found");
+    createErrorUtil(400, "Seller, Creator, or Category Not Found");
   }
 
   const result = await prisma.deal.update({
     where: { id },
     data: {
       ...rest,
-      ...(seller && { seller_id: seller.id }),
-      ...(creator && { creator: creator.id }),
-      ...(category && { category_id: category.id }),
+      seller_id: seller?.id || deal.seller_id,
+      creator: creator?.id || deal.creator,
+      category_id: category?.id || deal.category_id,
+      ...(images?.create?.length > 0 && {
+        images: {
+          create: images.create,
+        },
+      }),
     },
     include: {
       seller: true,
-      createdByUser: true,
       category: true,
+      images: true,
+      createdByUser: {
+        select: {
+          id: true,
+          name: true,
+          last_name: true,
+          tel_number: true,
+          email: true,
+          role: true,
+          birth_date: true,
+          coin: true,
+          trust_score_id: true,
+          profile_image: true,
+          created_at: true,
+          updated_at: true,
+        },
+      },
     },
   });
 
@@ -361,4 +386,3 @@ export const adminUpdateUser = async (id, data) => {
     },
   });
 };
-

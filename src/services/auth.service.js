@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import { createErrorUtil } from "../utils/createError.util.js";
 import bcrypt from "bcryptjs";
+import { uploadToCloudinary } from "../utils/cloudinary.util.js"; 
 
 export const registerService = async (data) => {
   console.log("data", data);
@@ -13,6 +14,13 @@ export const registerService = async (data) => {
     createErrorUtil(400, "User Already Exist !");
   }
   const hash = bcrypt.hashSync(password, 10);
+
+  let profileImageUrl = null
+  if (data.profile_image && data.profile_image.length > 0) {
+    const uploaded = await uploadToCloudinary(data.profile_image[0].path);
+    profileImageUrl = uploaded.secure_url;
+  };
+
   const result = await prisma.user.create({
     data: {
       name,
@@ -21,6 +29,7 @@ export const registerService = async (data) => {
       email,
       password: hash,
       birth_date: new Date(birth_date),
+      profile_image: profileImageUrl,
     },
   });
   return result;

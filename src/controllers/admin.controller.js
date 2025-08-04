@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
 import * as adminService from "../services/admin.service.js";
+import { uploadToCloudinary } from "../utils/cloudinary.util.js";
 
 export const getAllDeals = async (req, res, next) => {
   try {
@@ -12,8 +13,25 @@ export const getAllDeals = async (req, res, next) => {
 
 export const createDeal = async (req, res, next) => {
   try {
-    const data = req.body;
-    const result = await adminService.createDeal(data);
+    const data = {
+      ...req.body,
+      max_participants: parseInt(req.body.max_participants, 10),
+    };
+
+    let imageUrls = [];
+
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(
+        req.files.map((file) => uploadToCloudinary(file.path, "deals"))
+      );
+      imageUrls = uploads.map((upload) => upload.secure_url);
+    }
+    const result = await adminService.createDeal({
+      ...data,
+      images: {
+        create: imageUrls.map((url) => ({ image_url: url })),
+      },
+    });
     res.status(201).json({ message: "Deal Created", result });
   } catch (error) {
     next(error);
@@ -23,8 +41,26 @@ export const createDeal = async (req, res, next) => {
 export const updateDeal = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const data = req.body;
-    const result = await adminService.updateDeal(id, data);
+    const data = {
+      ...req.body,
+      max_participants: parseInt(req.body.max_participants, 10),
+    };
+
+    let imageUrls = [];
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(
+        req.files.map((file) => uploadToCloudinary(file.path, "deals"))
+      );
+      imageUrls = uploads.map((upload) => upload.secure_url);
+    }
+    const result = await adminService.updateDeal(id, {
+      ...data,
+      ...(imageUrls.length > 0 && {
+        images: {
+          create: imageUrls.map((url) => ({ image_url: url })),
+        },
+      }),
+    });
     res.status(200).json({ message: "Deal Updated", result });
   } catch (error) {
     next(error);
@@ -239,20 +275,20 @@ export const deleteSeller = async (req, res, next) => {
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const result = await adminService.getAllUsers()
-    res.status(200).json({Users : result})
+    const result = await adminService.getAllUsers();
+    res.status(200).json({ Users: result });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const adminUpdateUser = async (req, res, next) => {
   try {
-    const {id} = req.params
-    const data = req.body
-    const result = await adminService.adminUpdateUser(id, data)
-    res.status(200).json({message: "User Updated", result})
+    const { id } = req.params;
+    const data = req.body;
+    const result = await adminService.adminUpdateUser(id, data);
+    res.status(200).json({ message: "User Updated", result });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
