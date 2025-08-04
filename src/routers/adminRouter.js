@@ -15,6 +15,7 @@ import {
   getAllDeals,
   getAllSellers,
   getAllStats,
+  getAllUsers,
   getAlmostExpiredDeals,
   getCancelledDeals,
   getExpiredDeals,
@@ -25,6 +26,7 @@ import {
   updateCategory,
   updateDeal,
   updateSeller,
+  updateUser,
 } from "../controllers/admin.controller.js";
 import { authUserCheck } from "../middlewares/auth.middleware.js";
 import { checkRole } from "../middlewares/checkRole.middleware.js";
@@ -35,13 +37,13 @@ const adminRouter = express.Router();
 adminRouter.use(authUserCheck);
 adminRouter.use(checkRole(["ADMIN", "SUPERADMIN"]));
 
+adminRouter.get("/users", getAllUsers)
+adminRouter.put("/users/:id", checkRole(["SUPERADMIN"]), updateUser)
+
 adminRouter.get("/deals", getAllDeals)
 adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
 adminRouter.put("/deals/:id", uploadMiddleware.array("image", 5), updateDeal);
 adminRouter.delete("/deals/:id", checkRole(["SUPERADMIN"]), uploadMiddleware.array("image", 5), deleteDeal);
-
-// NOT SURE THAT IT SHOULD STILL EXIST OR NOT, BECAUSE IT IS ALREADY ON THE authUserRouter.js FILE.
-adminRouter.get("/deals/:id/joiners", getAllDealJoiner)
 
 adminRouter.get("/stats", getAllStats);
 adminRouter.get("/stats/deals-total", countTotalDeals);

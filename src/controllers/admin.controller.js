@@ -236,3 +236,23 @@ export const deleteSeller = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const result = await adminService.getAllUsers()
+    res.status(200).json({Users : result})
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateUser = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const data = req.body
+    const result = await adminService.updateUser(id, data)
+    res.status(200).json({message: "User Updated", result})
+  } catch (error) {
+    next(error)
+  }
+}

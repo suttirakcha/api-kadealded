@@ -314,3 +314,51 @@ export const deleteSeller = (id) => {
     where: { id },
   });
 };
+
+export const getAllUsers = () => {
+  return prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      last_name: true,
+      tel_number: true,
+      email: true,
+      role: true,
+      birth_date: true,
+      coin: true,
+      trust_score_id: true,
+      profile_image: true,
+    },
+  });
+};
+
+export const updateUser = async (id, data) => {
+  const existUser = await prisma.user.findUnique({
+    where: { id },
+  });
+  if (!existUser) {
+    createErrorUtil(400, "User is not Found");
+  }
+
+  const { password, refresh_token, ...updateData } = data;
+
+  return await prisma.user.update({
+    where: { id },
+    data: updateData,
+    select: {
+      id: true,
+      name: true,
+      last_name: true,
+      tel_number: true,
+      email: true,
+      role: true,
+      birth_date: true,
+      coin: true,
+      trust_score_id: true,
+      profile_image: true,
+      created_at: true,
+      updated_at: true,
+    },
+  });
+};
+
