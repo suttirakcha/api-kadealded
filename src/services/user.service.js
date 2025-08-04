@@ -42,7 +42,36 @@ export const getProfile = async (data) => {
   });
   return result;
 };
-export const topUpCoins = async () => {};
+
+export const topUpCoins = async (userId, amount) => {
+  const totalTransactions = await prisma.coinTransaction.findMany({
+    where: { user_id: userId },
+  });
+
+  if (!totalTransactions) {
+    createErrorUtil(400, "No transactions");
+  }
+
+  const result = await prisma.coinTransaction.create({
+    data: {
+      user_id: userId,
+      type: "TOPUP",
+      amount,
+    },
+  });
+
+  const currentCoins = totalTransactions.reduce(
+    (acc, curr) => acc + curr.amount,
+    0
+  );
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { coin: currentCoins },
+  });
+
+  return result;
+};
 
 export const getCoinsUser = async (data) => {
   const { id } = data;
@@ -89,12 +118,12 @@ export const updateUser = async (id, data) => {
       id,
     },
   });
-  if(!user){
-    createErrorUtil(400,"Not Found User")
+  if (!user) {
+    createErrorUtil(400, "Not Found User");
   }
   const result = await prisma.user.update({
     where: { id: user.id },
-    data
-  })
-  return result
+    data,
+  });
+  return result;
 };
