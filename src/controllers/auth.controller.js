@@ -10,7 +10,11 @@ import {
 export const registerController = async (req, res, next) => {
   try {
     const result = await registerService(req.body);
-    res.status(201).json({ message: `Register K.${result.name} ${result.last_name} Successful` });
+    res
+      .status(201)
+      .json({
+        message: `Register K.${result.name} ${result.last_name} Successful`,
+      });
   } catch (error) {
     console.log(error);
     next(error);
@@ -48,7 +52,7 @@ export const loginController = async (req, res, next) => {
   }
 };
 
-export const refreshTokenController = async (req, res) => {
+export const refreshTokenController = async (req, res, next) => {
   const token = req.cookies.authorization;
   if (!token) {
     createErrorUtil(401, "Unauthorized token");
@@ -79,6 +83,20 @@ export const refreshTokenController = async (req, res) => {
     });
 
     res.json({ token: newAccessToken });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const logoutController = (req, res, next) => {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: true,
+    });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log(error);
     next(error);
