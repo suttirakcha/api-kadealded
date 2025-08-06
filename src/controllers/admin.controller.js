@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import * as adminService from "../services/admin.service.js";
 import { uploadToCloudinary } from "../utils/cloudinary.util.js";
+import { createErrorUtil } from "../utils/createError.util.js";
 
 export const getAllDeals = async (req, res, next) => {
   try {
@@ -13,26 +14,28 @@ export const getAllDeals = async (req, res, next) => {
 
 export const createDeal = async (req, res, next) => {
   try {
+    const { category_name, creator_name, seller_name, ...rest } = req.body;
+
     const data = {
-      ...req.body,
-      max_participants: parseInt(req.body.max_participants, 10),
+      ...rest,
+      max_participants: parseInt(rest.max_participants, 10),
     };
 
     let imageUrls = [];
 
-    if (req.files && req.files.length > 0) {
-      const uploads = await Promise.all(
-        req.files.map((file) => uploadToCloudinary(file.path, "deals"))
-      );
-      imageUrls = uploads.map((upload) => upload.secure_url);
-    }
+    // if (req.files && req.files.length > 0) {
+    //   const uploads = await Promise.all(
+    //     req.files.map((file) => uploadToCloudinary(file.path, "deals"))
+    //   );
+    //   imageUrls = uploads.map((upload) => upload.secure_url);
+    // }
     const result = await adminService.createDeal({
       ...data,
       images: {
         create: imageUrls.map((url) => ({ image_url: url })),
       },
     });
-    res.status(201).json({ message: "Deal Created", result });
+    res.status(201).json({ message: "Deal created", result });
   } catch (error) {
     next(error);
   }
@@ -41,18 +44,20 @@ export const createDeal = async (req, res, next) => {
 export const updateDeal = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { category_name, creator_name, seller_name, ...rest } = req.body;
+
     const data = {
-      ...req.body,
-      max_participants: parseInt(req.body.max_participants, 10),
+      ...rest,
+      max_participants: parseInt(rest.max_participants, 10),
     };
 
     let imageUrls = [];
-    if (req.files && req.files.length > 0) {
-      const uploads = await Promise.all(
-        req.files.map((file) => uploadToCloudinary(file.path, "deals"))
-      );
-      imageUrls = uploads.map((upload) => upload.secure_url);
-    }
+    // if (req.files && req.files.length > 0) {
+    //   const uploads = await Promise.all(
+    //     req.files.map((file) => uploadToCloudinary(file.path, "deals"))
+    //   );
+    //   imageUrls = uploads.map((upload) => upload.secure_url);
+    // }
     const result = await adminService.updateDeal(id, {
       ...data,
       ...(imageUrls.length > 0 && {
@@ -61,7 +66,7 @@ export const updateDeal = async (req, res, next) => {
         },
       }),
     });
-    res.status(200).json({ message: "Deal Updated", result });
+    res.status(200).json({ message: "Deal updated", result });
   } catch (error) {
     next(error);
   }

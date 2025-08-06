@@ -21,6 +21,8 @@ export const getAllDeals = async () => {
 export const createDeal = async (data) => {
   const { seller_name, creator_name, category_name, ...rest } = data;
 
+  console.log(data);
+
   const seller = await prisma.seller.findFirst({
     where: { name: seller_name },
   });
@@ -39,9 +41,9 @@ export const createDeal = async (data) => {
   const result = await prisma.deal.create({
     data: {
       ...rest,
-      seller_id: seller.id,
-      creator: creator.id,
-      category_id: category.id,
+      seller: { connect: { id: seller.id } },
+      category: { connect: { id: category.id } },
+      createdByUser: { connect: { id: creator.id } },
     },
     include: {
       seller: true,
@@ -59,17 +61,29 @@ export const updateDeal = async (id, data) => {
   }
   const { seller_name, creator_name, category_name, images, ...rest } = data;
 
-  const seller = seller_name
-    ? await prisma.seller.findFirst({ where: { name: seller_name } })
-    : null;
+    const seller = await prisma.seller.findFirst({
+    where: { name: seller_name },
+  });
 
-  const creator = creator_name
-    ? await prisma.user.findFirst({ where: { name: creator_name } })
-    : null;
+  const creator = await prisma.user.findFirst({
+    where: { name: creator_name },
+  });
 
-  const category = category_name
-    ? await prisma.category.findUnique({ where: { name: category_name } })
-    : null;
+  const category = await prisma.category.findFirst({
+    where: { name: category_name },
+  });
+
+  // const seller = seller_name
+  //   ? await prisma.seller.findFirst({ where: { name: seller_name } })
+  //   : null;
+
+  // const creator = creator_name
+  //   ? await prisma.user.findFirst({ where: { name: creator_name } })
+  //   : null;
+
+  // const category = category_name
+  //   ? await prisma.category.findUnique({ where: { name: category_name } })
+  //   : null;
 
   if (
     (seller_name && !seller) ||
@@ -83,9 +97,9 @@ export const updateDeal = async (id, data) => {
     where: { id },
     data: {
       ...rest,
-      seller_id: seller?.id || deal.seller_id,
-      creator: creator?.id || deal.creator,
-      category_id: category?.id || deal.category_id,
+      seller: { connect: { id: seller.id } },
+      category: { connect: { id: category.id } },
+      createdByUser: { connect: { id: creator.id } },
       ...(images?.create?.length > 0 && {
         images: {
           create: images.create,
@@ -96,22 +110,23 @@ export const updateDeal = async (id, data) => {
       seller: true,
       category: true,
       images: true,
-      createdByUser: {
-        select: {
-          id: true,
-          name: true,
-          last_name: true,
-          tel_number: true,
-          email: true,
-          role: true,
-          birth_date: true,
-          coin: true,
-          trust_score_id: true,
-          profile_image: true,
-          created_at: true,
-          updated_at: true,
-        },
-      },
+      createdByUser: true
+      // createdByUser: {
+      //   select: {
+      //     id: true,
+      //     name: true,
+      //     last_name: true,
+      //     tel_number: true,
+      //     email: true,
+      //     role: true,
+      //     birth_date: true,
+      //     coin: true,
+      //     trust_score_id: true,
+      //     profile_image: true,
+      //     created_at: true,
+      //     updated_at: true,
+      //   },
+      // },
     },
   });
 

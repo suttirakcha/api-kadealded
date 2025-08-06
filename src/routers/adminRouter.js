@@ -37,7 +37,7 @@ adminRouter.use(authUserCheck);
 adminRouter.use(checkRole(["ADMIN", "SUPERADMIN"]));
 
 adminRouter.get("/users", getAllUsers)
-adminRouter.put("/users/:id", checkRole(["SUPERADMIN"]), adminUpdateUser)
+adminRouter.put("/users/:id", checkRole(["ADMIN", "SUPERADMIN"]), adminUpdateUser)
 
 adminRouter.get("/deals", getAllDeals)
 adminRouter.post("/deals", uploadMiddleware.array("image", 5), createDeal);
