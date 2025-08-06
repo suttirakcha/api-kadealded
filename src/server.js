@@ -10,6 +10,7 @@ import authUserRouter from "./routers/authUserRouter.js";
 import userRouter from "./routers/userRouter.js";
 import contactRoute from "./routers/contactUsRouter.js";
 import otpRouter from "./routers/otpRouter.js";
+import paymentRouter from "./routers/paymentRouter.js";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use("/admin", adminRouter);
 app.use("/api", userRouter);
 app.use("/api", contactRoute);
 app.use("/otp", otpRouter)
+app.use('/api',paymentRouter)
 
 app.use(notFoundUtil);
 app.use(errorUtil);

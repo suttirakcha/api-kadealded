@@ -25,6 +25,7 @@ enum DealStatus {
 enum PaymentStatus {
   PENDING
   PAID
+  CANCELLED
 }
 
 enum PaymentMethod {
@@ -50,33 +51,41 @@ enum OtpType {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  name           String
-  last_name      String
-  tel_number     String
-  email          String    @unique
-  password       String
-  role           Role      @default(CUSTOMER)
-  birth_date     DateTime?
-  coin           Int       @default(0)
-  trust_score_id Int?
-  profile_image  String?
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
-  refreshToken   String?   @unique
-
-  notifications   NotificationTable[]
-  trustScores     TrustScore[]
-  createdDeals    Deal[]              @relation("CreatedDeals")
-  updatedDeals    Deal[]              @relation("UpdatedDeals")
-  createdTiers    PriceTier[]         @relation("CreatedPriceTiers")
-  updatedTiers    PriceTier[]         @relation("UpdatedPriceTiers")
-  createdPayments Payment[]
-  joinDeals       JoinDeal[]          @relation("UserJoinDeals")
-  coinTransaction CoinTransaction[]
-  qrCode          QrCode[]
+  id               String              @id @default(uuid())
+  name             String
+  last_name        String
+  tel_number       String
+  email            String              @unique
+  password         String
+  role             Role                @default(CUSTOMER)
+  birth_date       DateTime?
+  coin             Int                 @default(0)
+  trust_score_id   Int?
+  profile_image    String?
+  created_at       DateTime            @default(now())
+  updated_at       DateTime            @updatedAt
+  refreshToken     String?             @unique
+  stripeCustomerId String?
+  notifications    NotificationTable[]
+  trustScores      TrustScore[]
+  createdDeals     Deal[]              @relation("CreatedDeals")
+  updatedDeals     Deal[]              @relation("UpdatedDeals")
+  createdTiers     PriceTier[]         @relation("CreatedPriceTiers")
+  updatedTiers     PriceTier[]         @relation("UpdatedPriceTiers")
+  createdPayments  Payment[]
+  joinDeals        JoinDeal[]          @relation("UserJoinDeals")
+  coinTransaction  CoinTransaction[]
+  qrCode           QrCode[]
 
   @@map("users")
+}
+
+model PaymentItem {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  Payment   Payment? @relation(fields: [paymentId], references: [id])
+  paymentId String?
 }
 
 model CoinTransaction {
@@ -85,6 +94,9 @@ model CoinTransaction {
   amount     Int
   type       CoinTransactionType
   created_at DateTime            @default(now())
+
+  payment_id String?  @unique
+  payment    Payment? @relation("CoinPayment", fields: [payment_id], references: [id])
 
   user User @relation(fields: [user_id], references: [id])
 
@@ -185,17 +197,23 @@ model JoinDeal {
 model Payment {
   id             String        @id @default(uuid())
   amount         Float
-  payment_method PaymentMethod
+  payment_method PaymentMethod?
   payment_status PaymentStatus @default(PENDING)
   created_at     DateTime      @default(now())
+  userId         String
 
-  creator String
+  stripeSessionId String? @unique @map("stripe_session_id")
 
-  createdByUser  User             @relation(fields: [creator], references: [id])
+
+  coin_transaction CoinTransaction? @relation("CoinPayment")
+
+  createdByUser User @relation(fields: [userId], references: [id])
+
   paymentHistory PaymentHistory[] @relation("PaymentHistories")
 
-  joinDeal     JoinDeal? @relation("JoinDealPayments", fields: [join_deal_id], references: [id])
+  joinDeal     JoinDeal?     @relation("JoinDealPayments", fields: [join_deal_id], references: [id])
   join_deal_id String?
+  paymentItem  PaymentItem[]
 
   @@map("payments")
 }
@@ -271,9 +289,8 @@ model ContactMessage {
 }
 
 model QrCode {
-  id    String @id @default(uuid())
-  token String
-
+  id         String    @id @default(uuid())
+  token      String
   created_at DateTime  @default(now())
   expired_at DateTime?
   isUsed     Boolean   @default(false)
