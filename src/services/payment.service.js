@@ -1,8 +1,8 @@
-import prisma from "../config/prisma";
-import stripe from "../config/stripe";
-import BadRequest from "../error/badrequest-error";
-import InternalError from "../error/internal-error";
-import NotFound from "../error/notfound-error";
+import prisma from "../config/prisma.js";
+import stripe from "../config/stripe.js";
+import BadRequest from "../error/badrequest-error.js";
+import InternalError from "../error/internal-error.js";
+import NotFound from "../error/notfound-error.js";
 
 export const createNewOrder = async (data,userId) => {
   const {amount ,priceId} = data 
