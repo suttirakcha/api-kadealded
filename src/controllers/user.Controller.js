@@ -4,6 +4,7 @@ import {
   getDealById,
   getDealHistory,
   getProfile,
+  topUpCoins,
   updateUser,
 } from "../services/user.service.js";
 
@@ -36,8 +37,11 @@ export const controllerGetProfile = async (req, res, next) => {
     next(error);
   }
 };
-export const controllerTopUpCoins = async () => {
+export const controllerTopUpCoins = async (req, res, next) => {
   try {
+    const { amount } = req.body;
+    const result = await topUpCoins(req.user.id, amount);
+    res.json({ message: "Coins added", result })
   } catch (error) {
     console.log(error);
     next(error);
