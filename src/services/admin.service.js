@@ -87,9 +87,6 @@ export const updateDeal = async (id, data) => {
     where: { id: deal.category_id },
   });
 
-  if (!seller || !creator || !category) {
-    createErrorUtil(400, "Seller or Creator Not Found");
-  }
   // const { seller_name, creator_name, category_name, images, ...rest } = data;
 
   // const seller = await prisma.seller.findFirst({
