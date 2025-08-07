@@ -11,7 +11,7 @@ export const authUserCheck = async (req, res, next) => {
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
     if (!user || user.refreshToken !== token) {
-      return next(createErrorUtil(403, "Invalid refresh token"));
+      return next(createErrorUtil(401, "Invalid refresh token"));
     }
 
     req.user = { id: user.id, role: user.role }; // เพิ่ม role เข้าไปให้ checkRole ใช้ต่อได้
