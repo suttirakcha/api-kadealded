@@ -49,7 +49,7 @@ adminRouter.get("/stats/deals-total", countTotalDeals);
 adminRouter.get("/stats/customers-total", countTotalCustomers);
 adminRouter.get("/stats/joins-total", countTotalConfirmed);
 adminRouter.get("/stats/confirmed-total", countTotalJoinDeals);
-adminRouter.get("/stats/conis-used", sumTotalCoins);
+adminRouter.get("/stats/coins-used", sumTotalCoins);
 adminRouter.get("/stats/top-deals", getTopDeals);
 adminRouter.get("/stats/almost-expired", getAlmostExpiredDeals);
 adminRouter.get("/stats/cancelled", getCancelledDeals);
