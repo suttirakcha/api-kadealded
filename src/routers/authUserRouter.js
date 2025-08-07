@@ -10,7 +10,7 @@ import {
   validate,
 } from "../validators/validation.js";
 import { loginWithGoogle } from "../controllers/google-auth.controller.js";
-import { getAllDealJoiner } from "../controllers/admin.controller.js";
+import { getAllCategories, getAllDealJoiner } from "../controllers/admin.controller.js";
 import uploadMiddleware from "../middlewares/upload.middleware.js";
 
 const authUserRouter = express.Router();
@@ -29,5 +29,6 @@ authUserRouter.post(
 authUserRouter.post("/logout", logoutController);
 authUserRouter.post("/auth/google", loginWithGoogle);
 authUserRouter.get("/deals/:id/joiners", getAllDealJoiner);
+authUserRouter.get("/categories", getAllCategories)
 
 export default authUserRouter;

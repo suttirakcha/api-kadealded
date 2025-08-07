@@ -57,7 +57,7 @@ adminRouter.get("/stats/expired", getExpiredDeals);
 adminRouter.get("/stats/new-customers-week", getNewCustomersThisWeek);
 adminRouter.get("/stats/pending-payments", getPendingPayments);
 
-adminRouter.get("/categories", getAllCategories)
+adminRouter.get("/categories", checkRole(["USER", "ADMIN", "SUPERADMIN"]), getAllCategories)
 adminRouter.post("/categories", createCategory);
 adminRouter.put("/categories/:id", updateCategory);
 adminRouter.delete("/categories/:id", checkRole(["SUPERADMIN"]), deleteCategory);
