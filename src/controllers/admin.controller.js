@@ -14,12 +14,8 @@ export const getAllDeals = async (req, res, next) => {
 
 export const createDeal = async (req, res, next) => {
   try {
-    const { category_name, creator_name, seller_name, ...rest } = req.body;
-
-    const data = {
-      ...rest,
-      max_participants: parseInt(rest.max_participants, 10),
-    };
+    // console.log("body", req.body);
+    // const { category_name, creator_name, seller_name, ...rest } = req.body;
 
     let imageUrls = [];
 
@@ -30,10 +26,10 @@ export const createDeal = async (req, res, next) => {
     //   imageUrls = uploads.map((upload) => upload.secure_url);
     // }
     const result = await adminService.createDeal({
-      ...data,
-      images: {
-        create: imageUrls.map((url) => ({ image_url: url })),
-      },
+      data: req.body,
+      // images: {
+      //   create: imageUrls.map((url) => ({ image_url: url })),
+      // },
     });
     res.status(201).json({ message: "Deal created", result });
   } catch (error) {
@@ -44,12 +40,12 @@ export const createDeal = async (req, res, next) => {
 export const updateDeal = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { category_name, creator_name, seller_name, ...rest } = req.body;
+    // const { category_name, creator_name, seller_name, ...rest } = req.body;
 
-    const data = {
-      ...rest,
-      max_participants: parseInt(rest.max_participants, 10),
-    };
+    // const data = {
+    //   ...rest,
+    //   max_participants: parseInt(rest.max_participants, 10),
+    // };
 
     let imageUrls = [];
     // if (req.files && req.files.length > 0) {
@@ -59,7 +55,7 @@ export const updateDeal = async (req, res, next) => {
     //   imageUrls = uploads.map((upload) => upload.secure_url);
     // }
     const result = await adminService.updateDeal(id, {
-      ...data,
+      ...req.body,
       ...(imageUrls.length > 0 && {
         images: {
           create: imageUrls.map((url) => ({ image_url: url })),

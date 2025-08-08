@@ -19,39 +19,54 @@ export const getAllDeals = async () => {
 };
 
 export const createDeal = async (data) => {
-  const { seller_name, creator_name, category_name, ...rest } = data;
-
-  console.log(data);
-
   const seller = await prisma.seller.findFirst({
-    where: { name: seller_name },
+    where: { id: data.seller_id },
   });
 
   const creator = await prisma.user.findFirst({
-    where: { name: creator_name },
+    where: { id: data.creator },
   });
 
   const category = await prisma.category.findFirst({
-    where: { name: category_name },
+    where: { id: data.category_id },
   });
+
   if (!seller || !creator || !category) {
     createErrorUtil(400, "Seller or Creator Not Found");
   }
 
-  const result = await prisma.deal.create({
-    data: {
-      ...rest,
-      seller: { connect: { id: seller.id } },
-      category: { connect: { id: category.id } },
-      createdByUser: { connect: { id: creator.id } },
-    },
-    include: {
-      seller: true,
-      createdByUser: true,
-      category: true,
-    },
-  });
+  const result = await prisma.deal.create(data);
   return result;
+
+  // const { seller_name, creator_name, category_name, ...rest } = data;
+  // const seller = await prisma.seller.findFirst({
+  //   where: { name: seller_name },
+  // });
+
+  // const creator = await prisma.user.findFirst({
+  //   where: { name: creator_name },
+  // });
+
+  // const category = await prisma.category.findFirst({
+  //   where: { name: category_name },
+  // });
+  // if (!seller || !creator || !category) {
+  //   createErrorUtil(400, "Seller or Creator Not Found");
+  // }
+
+  // const result = await prisma.deal.create({
+  //   data: {
+  //     ...rest,
+  //     seller: { connect: { id: seller.id } },
+  //     category: { connect: { id: category.id } },
+  //     createdByUser: { connect: { id: creator.id } },
+  //   },
+  //   include: {
+  //     seller: true,
+  //     createdByUser: true,
+  //     category: true,
+  //   },
+  // });
 };
 
 export const updateDeal = async (id, data) => {
@@ -59,19 +74,32 @@ export const updateDeal = async (id, data) => {
   if (!deal) {
     createErrorUtil(404, "Deal Not Found");
   }
-  const { seller_name, creator_name, category_name, images, ...rest } = data;
 
-    const seller = await prisma.seller.findFirst({
-    where: { name: seller_name },
+  const seller = await prisma.seller.findFirst({
+    where: { id: deal.seller_id },
   });
 
   const creator = await prisma.user.findFirst({
-    where: { name: creator_name },
+    where: { id: deal.creator },
   });
 
   const category = await prisma.category.findFirst({
-    where: { name: category_name },
+    where: { id: deal.category_id },
   });
+
+  // const { seller_name, creator_name, category_name, images, ...rest } = data;
+
+  // const seller = await prisma.seller.findFirst({
+  //   where: { name: seller_name },
+  // });
+
+  // const creator = await prisma.user.findFirst({
+  //   where: { name: creator_name },
+  // });
+
+  // const category = await prisma.category.findFirst({
+  //   where: { name: category_name },
+  // });
 
   // const seller = seller_name
   //   ? await prisma.seller.findFirst({ where: { name: seller_name } })
@@ -86,48 +114,48 @@ export const updateDeal = async (id, data) => {
   //   : null;
 
   if (
-    (seller_name && !seller) ||
-    (creator_name && !creator) ||
-    (category_name && !category)
+    (!seller) ||
+    (!creator) ||
+    (!category)
   ) {
     createErrorUtil(400, "Seller, Creator, or Category Not Found");
   }
 
   const result = await prisma.deal.update({
-    where: { id },
-    data: {
-      ...rest,
-      seller: { connect: { id: seller.id } },
-      category: { connect: { id: category.id } },
-      createdByUser: { connect: { id: creator.id } },
-      ...(images?.create?.length > 0 && {
-        images: {
-          create: images.create,
-        },
-      }),
-    },
-    include: {
-      seller: true,
-      category: true,
-      images: true,
-      createdByUser: true
-      // createdByUser: {
-      //   select: {
-      //     id: true,
-      //     name: true,
-      //     last_name: true,
-      //     tel_number: true,
-      //     email: true,
-      //     role: true,
-      //     birth_date: true,
-      //     coin: true,
-      //     trust_score_id: true,
-      //     profile_image: true,
-      //     created_at: true,
-      //     updated_at: true,
-      //   },
-      // },
-    },
+    where: { id }, data
+    // data: {
+    //   ...rest,
+    //   seller: { connect: { id: seller.id } },
+    //   category: { connect: { id: category.id } },
+    //   createdByUser: { connect: { id: creator.id } },
+    //   ...(images?.create?.length > 0 && {
+    //     images: {
+    //       create: images.create,
+    //     },
+    //   }),
+    // },
+    // include: {
+    //   seller: true,
+    //   category: true,
+    //   images: true,
+    //   createdByUser: true,
+    //   // createdByUser: {
+    //   //   select: {
+    //   //     id: true,
+    //   //     name: true,
+    //   //     last_name: true,
+    //   //     tel_number: true,
+    //   //     email: true,
+    //   //     role: true,
+    //   //     birth_date: true,
+    //   //     coin: true,
+    //   //     trust_score_id: true,
+    //   //     profile_image: true,
+    //   //     created_at: true,
+    //   //     updated_at: true,
+    //   //   },
+    //   // },
+    // },
   });
 
   return result;
