@@ -11,6 +11,7 @@ import userRouter from "./routers/userRouter.js";
 import contactRoute from "./routers/contactUsRouter.js";
 import otpRouter from "./routers/otpRouter.js";
 import paymentRouter from "./routers/paymentRouter.js";
+import webhookRouter from "./routers/webhookRouter.js";
 
 dotenv.config();
 
@@ -22,6 +23,9 @@ app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
 }));
+
+app.use("/webhook", express.raw({ type: "application/json" }), webhookRouter);
+
 
 app.use(morgan("dev"));
 app.use(express.json());

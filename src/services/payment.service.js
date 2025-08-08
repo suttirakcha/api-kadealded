@@ -8,17 +8,18 @@ export const createNewOrder = async (data,userId) => {
   const {amount ,priceId} = data 
   const { url, stripeSessionId } = await createStripeSeesion(
     parseInt(userId),
-    priceId
+    priceId,
+    amount
   );
-  await prisma.payment.create({
-    stripeSessionId,
-    amount, 
-    userId,
-  });
+  // await prisma.payment.create({
+  //   stripeSessionId,
+  //   amount, 
+  //   userId,
+  // });
   return { url };
 };
 
-export const createStripeSeesion = async (userId,paymentId) => {
+export const createStripeSeesion = async (userId,paymentId,amount) => {
   try {
     const stripeSession = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -29,9 +30,18 @@ export const createStripeSeesion = async (userId,paymentId) => {
       success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.FRONTEND_URL}/cancel`,
     });
-    return {url : stripeSession.url , st} 
+    prisma.payment.create({
+      data : {
+        amount,
+        userId,
+        stripeSessionId : stripeSession.id,
+      }
+    })
+    console.log(stripeSession)
+    return {url : stripeSession.url } 
     
   } catch (error) {
+    console.log(error)
     throw new InternalError(error.message);
   }
 };
