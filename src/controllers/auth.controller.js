@@ -56,16 +56,18 @@ export const loginController = async (req, res, next) => {
 };
 
 export const refreshTokenController = async (req, res, next) => {
-  const token = req.headers.authorization?.split(" ");
-  console.log(token);
+  const token = req.cookies.refreshToken;
+  // console.log("Token", token);
   if (!token) {
     createErrorUtil(401, "Unauthorized token");
   }
   try {
-    const decoded = verifyToken(token, process.env.ACCESS_TOKEN_SECRET);
+    const decoded = verifyToken(token, process.env.REFRESH_TOKEN_SECRET);
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
+
+    // console.log("refreshToken", user.refreshToken);
 
     if (!user || user.refreshToken !== token) {
       createErrorUtil(401, "Token is missing");
