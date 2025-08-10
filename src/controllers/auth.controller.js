@@ -19,7 +19,7 @@ export const registerController = async (req, res, next) => {
         message: `Register K.${result.name} ${result.last_name} Successful`,
       });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     next(error);
   }
 };
@@ -50,7 +50,7 @@ export const loginController = async (req, res, next) => {
       token: accessToken,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     next(error);
   }
 };
