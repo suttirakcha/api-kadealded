@@ -130,7 +130,11 @@ export const getDealHistory = async (id) => {
       id,
     },
     select: {
-      joinDeals: true,
+      joinDeals: {
+        include: {
+          deal: true,
+        },
+      },
     },
     // include: {
     //   joinDeals: {
@@ -142,10 +146,10 @@ export const getDealHistory = async (id) => {
   });
 
   // กรอง qrCode ที่ userId ตรงกับ req.user.id
-  result.joinDeals = result.joinDeals.map((deal) => ({
-    ...deal,
-    qrCode: deal.qrCode.filter((qr) => qr.userId === req.user.id),
-  }));
+  // result.joinDeals = result.joinDeals.map((deal) => ({
+  //   ...deal,
+  //   qrCode: deal.qrCode.filter((qr) => qr.userId === req.user.id),
+  // }));
   return result;
 };
 
