@@ -1,4 +1,5 @@
-export const errorUtil = (error,req,res,next) => {
-  console.log(error)
-  res.status(error.status || 500).json({message : error.message || "Something Wrong"})
-}
+export const errorUtil = (err, req, res, next) => {
+  res
+    .status(err.statusCode || 500)
+    .json({ message: err.message || "Something Wrong" });
+};

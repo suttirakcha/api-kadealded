@@ -60,10 +60,17 @@ export const topUpCoins = async (userId, amount) => {
     },
   });
 
-  const currentCoins = totalTransactions.reduce(
-    (acc, curr) => acc + curr.amount,
-    0
-  );
+  const findCoin = await prisma.user.findFirst({
+    where: { id: userId },
+    select: { coin: true },
+  });
+
+  const currentCoins = findCoin.coin + amount;
+
+  // const currentCoins = totalTransactions.reduce(
+  //   (acc, curr) => acc + curr.amount,
+  //   amount
+  // );
 
   await prisma.user.update({
     where: { id: userId },
@@ -73,31 +80,65 @@ export const topUpCoins = async (userId, amount) => {
   return result;
 };
 
-export const getCoinsUser = async (data) => {
-  const { id } = data;
+export const reduceCoins = async (userId, amount) => {
+  const totalTransactions = await prisma.coinTransaction.findMany({
+    where: { user_id: userId },
+  });
+
+  if (!totalTransactions) {
+    createErrorUtil(400, "No transactions");
+  }
+
+  const result = await prisma.coinTransaction.create({
+    data: {
+      user_id: userId,
+      type: "JOIN_USE",
+      amount,
+    },
+  });
+
+  const findCoin = await prisma.user.findFirst({
+    where: { id: userId },
+    select: { coin: true },
+  });
+
+  const currentCoins = findCoin.coin - amount;
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { coin: currentCoins },
+  });
+
+  return result;
+};
+
+export const getCoinsUser = async (id) => {
   const result = await prisma.user.findUnique({
     where: {
       id,
     },
-    include: {
-      CoinTransaction,
+    select: {
+      coinTransaction: true,
     },
   });
   return result;
 };
-export const getDealHistory = async (data) => {
-  const { id } = data;
+
+export const getDealHistory = async (id) => {
   const result = await prisma.user.findUnique({
     where: {
       id,
     },
-    include: {
-      joinDeals: {
-        include: {
-          qrCode: true, // ดึงทั้งหมดมาก่อน
-        },
-      },
+    select: {
+      joinDeals: true,
     },
+    // include: {
+    //   joinDeals: {
+    //     include: {
+    //       qrCode: true, // ดึงทั้งหมดมาก่อน
+    //     },
+    //   },
+    // },
   });
 
   // กรอง qrCode ที่ userId ตรงกับ req.user.id
@@ -107,12 +148,12 @@ export const getDealHistory = async (data) => {
   }));
   return result;
 };
+
 export const createQrCodeDeal = async (data) => {
   const {} = data;
 };
 
 export const updateUser = async (id, data) => {
-  // const { id } = data;
   const user = await prisma.user.findUnique({
     where: {
       id,

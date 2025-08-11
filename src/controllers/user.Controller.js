@@ -4,9 +4,11 @@ import {
   getDealById,
   getDealHistory,
   getProfile,
+  reduceCoins,
   topUpCoins,
   updateUser,
 } from "../services/user.service.js";
+import { createErrorUtil } from "../utils/createError.util.js";
 
 export const controllerGetAll = async (req, res, next) => {
   try {
@@ -40,8 +42,20 @@ export const controllerGetProfile = async (req, res, next) => {
 export const controllerTopUpCoins = async (req, res, next) => {
   try {
     const { amount } = req.body;
-    const result = await topUpCoins(req.user.id, amount);
-    res.json({ message: "Coins added", result })
+    const { id } = req.user;
+    const result = await topUpCoins(id, amount);
+    res.json({ message: "Coins added", result });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+export const controllerReduceCoins = async (req, res, next) => {
+  try {
+    const { amount } = req.body;
+    const { id } = req.user;
+    const result = await reduceCoins(id, amount);
+    res.json({ message: "Coins used", result });
   } catch (error) {
     console.log(error);
     next(error);
@@ -49,7 +63,13 @@ export const controllerTopUpCoins = async (req, res, next) => {
 };
 export const controllerGetCoinsUser = async (req, res, next) => {
   try {
-    const result = await getCoinsUser(req.params.id);
+    const { id } = req.user;
+    const result = await getCoinsUser(id);
+
+    if (!result) {
+      createErrorUtil(400, "Invalid user");
+    }
+
     res.status(200).json({ result });
   } catch (error) {
     console.log(error);
@@ -58,7 +78,13 @@ export const controllerGetCoinsUser = async (req, res, next) => {
 };
 export const controllerGetDealHistory = async (req, res, next) => {
   try {
-    const result = await getDealHistory(req.params.id);
+    const { id } = req.user;
+    const result = await getDealHistory(id);
+
+    if (!result) {
+      createErrorUtil(400, "Invalid user");
+    }
+
     res.status(200).json({ result });
   } catch (error) {
     console.log(error);

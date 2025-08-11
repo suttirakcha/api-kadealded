@@ -1,5 +1,5 @@
 export const createErrorUtil = (status = 400, message) => {
   const error = new Error(message);
-  error.status = status;
+  error.statusCode = status;
   throw error;
 };
