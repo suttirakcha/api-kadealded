@@ -4,8 +4,8 @@ import BadRequest from "../error/badrequest-error.js";
 import InternalError from "../error/internal-error.js";
 import NotFound from "../error/notfound-error.js";
 
-export const createNewOrder = async (data,userId) => {
-  const {amount ,priceId} = data 
+export const createNewOrder = async (data, userId) => {
+  const { amount ,priceId } = data 
   const { url, stripeSessionId } = await createStripeSeesion(
     parseInt(userId),
     priceId,

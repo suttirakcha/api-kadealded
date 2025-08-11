@@ -4,6 +4,6 @@ import { createPayment } from '../controllers/payment.controller.js'
 
 const paymentRouter = express.Router()
 
-paymentRouter.post('/payment',authUserCheck,createPayment)
+paymentRouter.post('/payment',authUserCheck, createPayment)
 
 export default paymentRouter
