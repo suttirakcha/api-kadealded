@@ -117,7 +117,7 @@ export const getCoinsUser = async (id) => {
     where: {
       id,
     },
-    include: {
+    select: {
       coinTransaction: true,
     },
   });
@@ -129,7 +129,7 @@ export const getDealHistory = async (id) => {
     where: {
       id,
     },
-    include: {
+    select: {
       joinDeals: true,
     },
     // include: {
