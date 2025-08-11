@@ -1,4 +1,5 @@
 import {
+  findUser,
   getAllDeal,
   getCoinsUser,
   getDealById,
@@ -104,9 +105,16 @@ export const controllerUpdateUser = async (req, res, next) => {
   try {
     const { id } = req.user;
     const result = await updateUser(id, req.body);
-    res.status(200).json({ result });
+    res.status(200).json({ message: "Profile updated", result });
   } catch (error) {
     console.log(error);
     next(error);
   }
 };
+
+export const getMe = async (req, res, next) => {
+  const { id } = req.user;
+  const user = await findUser(id);
+
+  res.status(200).json({ message: "User fetched", user })
+}

@@ -172,3 +172,11 @@ export const updateUser = async (id, data) => {
   });
   return result;
 };
+
+export const findUser = async (id) => {
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  return user;
+};

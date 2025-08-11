@@ -9,12 +9,14 @@ import {
   controllerUpdateUser,
   controllerTopUpCoins,
   controllerReduceCoins,
+  getMe,
 } from "../controllers/user.Controller.js";
 import { authUserCheck } from "../middlewares/auth.middleware.js";
 import { refreshTokenController } from "../controllers/auth.controller.js";
 
 const userRouter = express.Router();
 
+userRouter.get("/me", authUserCheck, getMe);
 userRouter.get("/deal", controllerGetAll);
 userRouter.get("/deal/:id", controllerGetDealById);
 userRouter.get("/auth/profile", authUserCheck, controllerGetProfile);
