@@ -10,6 +10,7 @@ import {
   controllerTopUpCoins,
   controllerReduceCoins,
   getMe,
+  controllerJoinDeal,
 } from "../controllers/user.Controller.js";
 import { authUserCheck } from "../middlewares/auth.middleware.js";
 import { refreshTokenController } from "../controllers/auth.controller.js";
@@ -28,5 +29,6 @@ userRouter.get('/auth/deal/:id/qr',authUserCheck,controllerGetQrCodeHistory)
 userRouter.put('/auth/update/profile',authUserCheck,controllerUpdateUser);
 userRouter.post('/auth/coins/topup', authUserCheck, controllerTopUpCoins);
 userRouter.post('/auth/coins/use', authUserCheck, controllerReduceCoins);
+userRouter.post('/auth/deals/:id/join', authUserCheck, controllerJoinDeal)
 
 export default userRouter;
