@@ -60,21 +60,9 @@ export const topUpCoins = async (userId, amount) => {
     },
   });
 
-  const findCoin = await prisma.user.findFirst({
-    where: { id: userId },
-    select: { coin: true },
-  });
-
-  const currentCoins = findCoin.coin + amount;
-
-  // const currentCoins = totalTransactions.reduce(
-  //   (acc, curr) => acc + curr.amount,
-  //   amount
-  // );
-
   await prisma.user.update({
     where: { id: userId },
-    data: { coin: currentCoins },
+    data: { coin: { increment: amount } },
   });
 
   return result;
@@ -97,16 +85,9 @@ export const reduceCoins = async (userId, amount) => {
     },
   });
 
-  const findCoin = await prisma.user.findFirst({
-    where: { id: userId },
-    select: { coin: true },
-  });
-
-  const currentCoins = findCoin.coin - amount;
-
   await prisma.user.update({
     where: { id: userId },
-    data: { coin: currentCoins },
+    data: { coin: { decrement: amount } },
   });
 
   return result;
