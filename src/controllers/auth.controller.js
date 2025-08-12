@@ -63,14 +63,16 @@ export const refreshTokenController = async (req, res, next) => {
   }
   try {
     const decoded = verifyToken(token, process.env.REFRESH_TOKEN_SECRET);
+    if (!decoded){
+      createErrorUtil(401, "Invalid token");
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
 
-    // console.log("refreshToken", user.refreshToken);
-
-    if (!user || user.refreshToken !== token) {
-      createErrorUtil(401, "Token is missing");
+    if (!user) {
+      createErrorUtil(401, "Invalid user");
     }
 
     const newAccessToken = generateAccessToken(user.id);

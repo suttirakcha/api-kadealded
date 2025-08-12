@@ -277,7 +277,7 @@ export const deleteSeller = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
   try {
     const result = await adminService.getAllUsers();
-    res.status(200).json({ Users: result });
+    res.status(200).json({ users: result });
   } catch (error) {
     next(error);
   }
