@@ -118,16 +118,18 @@ export const getMe = async (req, res, next) => {
   const { id } = req.user;
   const user = await findUser(id);
 
-  res.status(200).json({ message: "User fetched", user })
-}
+  res.status(200).json({ message: "User fetched", user });
+};
 
 export const controllerJoinDeal = async (req, res, next) => {
   console.log("Request received for controllerJoinDeal");
-  const { id } = req.params;
-  const userId = req.user.id;
   try {
-    const deal = await prisma.deal.findUnique({ where: { id: id } });
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const { id } = req.params;
+    const userId = req.user.id;
+    const deal = await prisma.deal.findFirst({ where: { id: id } });
+    const user = await prisma.user.findFirst({ where: { id: userId } });
+
+    console.log(deal);
 
     if (!deal || !user) {
       return res.status(404).json({ message: "Deal or user not found" });
@@ -156,6 +158,6 @@ export const controllerJoinDeal = async (req, res, next) => {
   } catch (error) {
     console.error("Error joining deal:", error);
     // return res.status(500).json({ message: "Internal server error" });
-    next(error)
+    next(error);
   }
 };
