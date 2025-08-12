@@ -157,6 +157,9 @@ export const updateUser = async (id, data) => {
 export const findUser = async (id) => {
   const user = await prisma.user.findUnique({
     where: { id },
+    include: {
+      joinDeals: true
+    }
   });
 
   return user;

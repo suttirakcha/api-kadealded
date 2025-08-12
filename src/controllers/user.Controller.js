@@ -125,25 +125,39 @@ export const controllerJoinDeal = async (req, res, next) => {
   console.log("Request received for controllerJoinDeal");
   try {
     const { id } = req.params;
+    // const { notes } = req.body;
     const userId = req.user.id;
     const deal = await prisma.deal.findFirst({ where: { id: id } });
     const user = await prisma.user.findFirst({ where: { id: userId } });
 
-    console.log(deal);
-
     if (!deal || !user) {
-      return res.status(404).json({ message: "Deal or user not found" });
+      createErrorUtil(404, "Deal or user not found");
     }
 
     const dealPrice = 50; //set temporary
     if (user.coin < dealPrice) {
-      return res.status(400).json({ message: "Not enough coin" });
+      createErrorUtil(400, "Not enough coins")
     }
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: { coin: { decrement: dealPrice } },
-    });
+    const deductCoins = await reduceCoins(userId, dealPrice);
+
+    if (!deductCoins){
+      createErrorUtil(400, "There was an error while joining deal")
+    }
+
+    await prisma.joinDeal.create({
+      data: { 
+        participation_status: "JOINED",
+        notes: "",
+        user_id: userId,
+        deal_id: deal.id
+      }
+    })
+
+    // await prisma.user.update({
+    //   where: { id: userId },
+    //   data: { coin: { decrement: dealPrice } },
+    // });
 
     const token = crypto.randomBytes(8).toString("hex").toUpperCase();
     const newQrCode = await prisma.qrCode.create({

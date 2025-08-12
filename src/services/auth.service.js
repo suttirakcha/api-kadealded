@@ -42,6 +42,9 @@ export const login = async (data) => {
     where: {
       email,
     },
+    include: {
+      joinDeals: true
+    },
     omit: {
       refreshToken: true,
     },
