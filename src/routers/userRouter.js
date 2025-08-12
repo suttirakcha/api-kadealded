@@ -25,10 +25,10 @@ userRouter.get("/refresh", refreshTokenController);
 userRouter.get("/auth/coins/history", authUserCheck, controllerGetCoinsUser);
 userRouter.get('/auth/deal/history',authUserCheck,controllerGetDealHistory)
 userRouter.get('/auth/deal/:id/qr',authUserCheck,controllerGetQrCodeHistory)
+userRouter.post('/auth/deal/:id/join', authUserCheck, controllerJoinDeal)
 // userRouter.put('/auth/update/profile',refreshTokenController,controllerUpdateUser)
 userRouter.put('/auth/update/profile',authUserCheck,controllerUpdateUser);
 userRouter.post('/auth/coins/topup', authUserCheck, controllerTopUpCoins);
 userRouter.post('/auth/coins/use', authUserCheck, controllerReduceCoins);
-userRouter.post('/auth/deals/:id/join', authUserCheck, controllerJoinDeal)
 
 export default userRouter;

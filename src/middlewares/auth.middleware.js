@@ -3,6 +3,7 @@ import prisma from "../config/prisma.js";
 import { createErrorUtil } from "../utils/createError.util.js";
 
 export const authUserCheck = async (req, res, next) => {
+  console.log("Checking token in authUserCheck middleware")
   try {
     const token = req.cookies?.refreshToken;
     if (!token) return next(createErrorUtil(401, "Missing refresh token"));

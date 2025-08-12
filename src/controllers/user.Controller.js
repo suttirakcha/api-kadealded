@@ -122,6 +122,7 @@ export const getMe = async (req, res, next) => {
 }
 
 export const controllerJoinDeal = async (req, res, next) => {
+  console.log("Request received for controllerJoinDeal");
   const { id } = req.params;
   const userId = req.user.id;
   try {
